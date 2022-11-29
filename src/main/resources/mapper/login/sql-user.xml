@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.security.mapper.UserMapper">
+    <select id="loadUserByUsername" parameterType="map" resultType="kr.co.haesungds.security.dto.UserDto">
+        <!--
+        select userid, passwd, user_nm, 'ADMIN,MANAGER,USER' as roles, 'COMMUNICATION_AUTHORITY,NOTICE_AUTHORITY,CONFIG_AUTHORITY' as "privileges"
+          from legum.cmm_user
+         where userid = #{username}
+        -->
+
+        /* common.LoginAuth.selectUserLoginInfo */
+        SELECT DISTINCT
+               CU.USERID						/* 사번 */
+             , CU.USER_NM		    			/* 이름 */
+             , CU.DEPT_CD		    			/* 부서코드 */
+             , CU.DEPT_NM		    			/* 부서명 */
+             , CU.POS_CD		    			/* 직급코드 */
+             , POS.CODE_NM AS POS_NM		    	/* 직급 */
+             , CU.JIKGUN_CD	    			/* 직군코드 */
+             , JIKGUN.CODE_NM AS JIKGUN_NM	    /* 직군명 */
+             , CU.USER_MAIL	    			/* 이메일 */
+             , CU.TEL_NO		    			/* 전화번호 */
+             , CU.PROD_SITE	    			/* 생산처구분 */
+             , PROD.CODE_NM AS PROD_SITE_NM    /* 생산처구분명 */
+             , CU.WORK_TP		    			/* 근무형태 */
+             , WORK.CODE_NM AS WORK_TP_NM	    /* 근무형태명 */
+             , EP_LOGINID
+             , EPID
+        <!--, DECODE(LEGUM.PK_CRYPTO.ENC_AES(#{PASS}), CU.PASSWD, 'SAME', 'DIFF') AS PASS_CHK	/* 로그인시 입력암호와 디비암호 비교결과 */ -->
+        <!-- , CAU.AUTH_GRP_ID -->
+             , NVL(LISTAGG(CAU.AUTH_GRP_ID, ',') WITHIN GROUP(ORDER BY CAU.AUTH_GRP_ID) OVER(PARTITION BY CAU.USERID), 'USER') AS AUTH_GRP_IDS
+             , NVL(LISTAGG(CAU.AUTH_GRP_ID, ',') WITHIN GROUP(ORDER BY CAU.AUTH_GRP_ID) OVER(PARTITION BY CAU.USERID), 'USER') AS roles
+             --, 'COMMUNICATION_AUTHORITY,NOTICE_AUTHORITY,CONFIG_AUTHORITY' as "privileges"
+             , '' as "privileges"
+             , #{LEG_CD} AS LEG_CD
+             , LEGUM.PK_CRYPTO.DEC_AES(CU.PASSWD) as PASSWD
+             --, PASSWD
+         FROM LEGUM.CMM_USER CU
+        /* LEGACY SYSTE USER */
+        INNER JOIN LEGUM.CMM_LEG_USER CLU
+           ON CU.USERID = CLU.USERID
+          AND CLU.LEG_CD = #{LEG_CD}
+        /* DEPT INFO */
+         LEFT OUTER JOIN LEGUM.CMM_DEPT DEPT
+           ON CU.DEPT_CD = DEPT.DEPT_CD
+          AND DEPT.USE_YN = 'Y'
+        /* POS INFO */
+         LEFT OUTER JOIN LEGUM.CMM_CODE POS
+           ON POS.CODE = CU.POS_CD
+          AND POS.GRP_CD = 'POSCD'
+          AND POS.USE_YN = 'Y'
+        /* JIKGUN INFO */
+         LEFT OUTER JOIN LEGUM.CMM_CODE JIKGUN
+           ON JIKGUN.CODE = CU.JIKGUN_CD
+          AND JIKGUN.GRP_CD = 'JIKGUN'
+          AND JIKGUN.USE_YN = 'Y'
+        /* PROD INFO */
+         LEFT OUTER JOIN LEGUM.CMM_CODE PROD
+           ON PROD.CODE = CU.PROD_SITE
+          AND PROD.GRP_CD = 'PROD_SITE'
+          AND PROD.USE_YN = 'Y'
+        /* WORK TP INFO */
+         LEFT OUTER JOIN LEGUM.CMM_CODE WORK
+           ON WORK.CODE = CU.WORK_TP
+          AND WORK.GRP_CD = 'WORKTP'
+          AND WORK.USE_YN = 'Y'
+        /* AUTH INFO */
+         LEFT OUTER JOIN CMM_AUTHGRP_USER CAU
+           ON CAU.LEG_CD = #{LEG_CD}
+          AND CU.USERID = CAU.USERID
+        WHERE CU.USE_YN = 'Y'
+          AND CU.USERID = #{USERID}
+    </select>
+
+    <select id="selectUserRoleList" parameterType="map" resultType="roleUser">
+        SELECT DISTINCT ROLE_ID
+        FROM CMM_LEG_ROLE_USER CLRU
+        WHERE LEG_CD = #{LEG_CD}
+          AND USERID = #{USERID}
+          AND APLY_YN = 'Y'
+    </select>
+
+    <select id="selectUserPrivilegesList" parameterType="map" resultType="roleUser">
+        WITH ROLE_USER AS(
+            SELECT LEG_CD
+                 , ROLE_ID
+                 , ROLE_NM
+                 , USERID
+                 , APLY_YN
+                 , DECODE(READ_ABLE, 'Y', ROLE_ID || '_READ', '') AS READ_ABLE
+                 , DECODE(WRITE_ABLE, 'Y', ROLE_ID || '_WRITE', '') AS WRITE_ABLE
+                 , DECODE(UPDATE_ABLE, 'Y', ROLE_ID || '_UPDATE', '') AS UPDATE_ABLE
+                 , DECODE(DELETE_ABLE, 'Y', ROLE_ID || '_DELETE', '') AS DELETE_ABLE
+                 , DECODE(DOWNLOAD_ABLE, 'Y', ROLE_ID || '_DOWNLOAD', '') AS DOWNLOAD_ABLE
+                 , DECODE(FN1, 'Y', ROLE_ID || '_FN1', '') AS FN1_ABLE
+                 , DECODE(FN2, 'Y', ROLE_ID || '_FN2', '') AS FN2_ABLE
+                 , DECODE(FN3, 'Y', ROLE_ID || '_FN3', '') AS FN3_ABLE
+                 , DECODE(FN4, 'Y', ROLE_ID || '_FN4', '') AS FN4_ABLE
+                 , DECODE(FN5, 'Y', ROLE_ID || '_FN5', '') AS FN5_ABLE
+            FROM CMM_LEG_ROLE_USER
+            WHERE LEG_CD = #{LEG_CD}
+              AND USERID = #{USERID}
+              AND APLY_YN = 'Y'
+        )
+        SELECT RU.AUTH as ROLE_ID
+        FROM (
+                 SELECT *
+                 FROM (
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(READ_ABLE, NULL, '', READ_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(WRITE_ABLE, NULL, '', WRITE_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(UPDATE_ABLE, NULL, '', UPDATE_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(DELETE_ABLE, NULL, '', DELETE_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(DOWNLOAD_ABLE, NULL, '', DOWNLOAD_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(FN1_ABLE, NULL, '', FN1_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(FN2_ABLE, NULL, '', FN2_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(FN3_ABLE, NULL, '', FN3_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(FN4_ABLE, NULL, '', FN4_ABLE) AS AUTH FROM ROLE_USER UNION ALL
+                          SELECT LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, DECODE(FN5_ABLE, NULL, '', FN5_ABLE) AS AUTH FROM ROLE_USER
+                      )
+                 WHERE  AUTH IS NOT NULL
+                 ORDER BY AUTH
+             ) RU
+        UNION ALL
+        SELECT 'USER' AS ROLE_ID FROM DUAL
+    </select>
+</mapper>

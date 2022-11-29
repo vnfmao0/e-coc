@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>damo EDITOR</title>
+<link type="text/css" href="../damoEditor.css" rel="stylesheet"/>
+<script type="text/javascript" src="../damoEditor.js" ></script>
+<script>
+// 기본 실행 & 저장
+var myArea1;
+window.onload = function() {
+	myArea1 = new DamoEditor("myArea1");
+}; 
+
+function save() {
+	if (myArea1.getLength()===0){
+		alert("글 내용을 입력해 주세요.");
+		return;
+	}
+	myArea1.saveContents();
+
+	form.submit();
+}
+
+</script>
+</head>
+<body>
+	<form>
+		<textarea name="myArea1" id="myArea1"  style="width: 750px; height: 300px"></textarea>
+	</form>
+	<button onclick="save()">글 저장</button>
+</body>	
+</html>

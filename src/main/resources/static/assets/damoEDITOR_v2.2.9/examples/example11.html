@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>damo EDITOR</title>
+<link type="text/css" href="../damoEditor.css" rel="stylesheet"/>
+<script type="text/javascript" src="../damoEditor.js" ></script>
+<script>
+// Skin
+var myArea1;
+window.onload = function() {
+	var option = {
+		colors: { 
+			editorBorder: "#fe931f", 
+			toolbarStart: "#fdf4eb", 
+			toolbarEnd: "#feca92", 
+			bottom: "#fcf5e6", 
+			bottomTop: "#e8bd8e"
+		}
+	};
+	
+	myArea1 = new DamoEditor("myArea1", option);
+}; 
+
+</script>
+</head>
+<body>
+	<textarea name="myArea1" id="myArea1"  style="width: 99%; height: 500px"></textarea>
+</body>	
+</html>

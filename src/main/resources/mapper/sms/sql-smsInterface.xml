@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.utils.sms.SmsInterfaceMapper">
+    <insert id="insertSdkSmsSend" parameterType="map">
+        INSERT INTO SAPSMS.SDK_SMS_SEND@LEGTOMDSLK(USER_ID, SCHEDULE_TYPE, SUBJECT, CALLBACK, DEST_TYPE, DEST_COUNT, DEST_INFO, SMS_MSG, NOW_DATE, SEND_DATE)
+        VALUES(
+              #{userId}
+            , #{scheduleType}
+            , #{subject}
+            , #{callback}
+            , #{destType}
+            , #{destCount}
+            , #{destInfo}
+            , #{smsMsg}
+            , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+        )
+    </insert>
+</mapper>

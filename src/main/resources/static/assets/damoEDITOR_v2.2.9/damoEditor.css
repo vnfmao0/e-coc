@@ -1,0 +1,1144 @@
+@charset "utf-8";
+
+/* *{box-sizing: content-box; padding: 0;}
+ */
+/* 20171213 */
+/* .damoSelect{padding:0px; height:24px; border:1px solid #e1e1e1; background:#ffffff; !important;} */
+/* label,.label {font-size:9pt; padding:0; margin:0px; color:#000; text-align:left; font-weight:normal; !important;} */
+/* Select{padding:0px; height:24px; border:1px solid #c5c5c5; background:#ffffff; !important;} */
+/* button{font-size:12px; cursor:pointer; padding:0; margin:0px;} */
+/* hr {display:block; border:0; border-top:1px solid #ccc;	margin:1em 0;padding:0; _background:#000;} */
+/* body{color:#000000;important;} */
+/* 20201216 damoEditor v 2.2.8*/
+
+.damoEditor{
+    border: 1px solid #DDDDDD;
+	min-width: 240px;
+}
+
+.damoEditor .editor{
+    overflow: auto;
+    border: 0px;
+    padding: 10px;
+    font-size: 10pt;
+    /* width: calc(100% - 20px); */
+    position: relative;   
+    font-family: segoe ui emoji; /*IE 이모지 색상 추가 20201215*/
+} 
+
+
+.damoEditor ol,
+.damoEditor li,
+.damoEditor ul{
+    margin-left: 10px;
+}
+
+.damoEditor .editor p,
+.damoEditor .editor table {
+    margin: 0px;
+    padding: 0px;
+    width:auto;
+}
+
+.damoEditor .toolbar{
+	font-family:"맑은 고딕";
+	padding: 5px;
+    /* width: calc(100% - 10px); */
+    min-height: 20px;
+    border-bottom: 1px solid #DDDDDD;
+    background: #fefeff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #fefeff 0%, #f0f2f6 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #fefeff 0%,#f0f2f6 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #fefeff 0%,#f0f2f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefeff', endColorstr='#f0f2f6',GradientType=0 ); /* IE6-9 */
+}
+
+.damoEditor .toolbar .subbar {
+	display: inline-block;
+	max-width: 720px;
+}	
+
+
+.damoEditor .toolbar .damoButton{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    margin:1px;
+    border:1px solid transparent;
+    background:none;
+    background-image: url('images/damoEditor.png');
+    vertical-align: middle;
+}
+
+.damoEditor .toolbar .damoButton:hover,.damoEditor .toolbar .damoButton:focus{
+    
+    border-color:#acacac;
+    background-color:#ffffff;
+    outline:0 none;
+}
+
+
+.damoEditor .toolbar .groupButton{
+    border: 1px solid #c6c6c6;
+    margin: 1px -1px 1px 0px;
+    background-color:#fbfbfb;
+    /* border-radius: 2px; */
+}
+
+.damoEditor .toolbar .groupButton:hover,.damoEditor .toolbar .groupButton:focus{
+    /* border: 1px solid #acacac;
+    background-color: #fff; */
+    border-color:#acacac;
+    background-color:#ffffff;
+    outline:0 none;
+}
+
+.damoEditor .toolbar .gap{
+    display: inline-block;
+    width: 1px;
+    height: 29px;
+    margin-top:0px;
+    margin-bottom:0px;
+    margin-left:6px;
+    margin-right:6px;
+    background-color: #DDDDDD;
+    vertical-align: middle;
+}
+
+.damoEditor .toolbar .blank{
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    margin:1px;
+    background-color: #EAEAEA;
+    vertical-align: middle;
+}
+
+.damoEditor .toolbar .blankSmall{
+    display: inline-block;
+    width: 8px;
+    height: 26px;
+    margin:1px;
+    _background-color: #EAEAEA;
+    vertical-align: middle;
+}
+
+.damoEditor .toolbar  .buttonSelect{
+    border: 1px solid #a0a0a0; 
+    background-color: #eaeaea;
+}
+
+.damoEditor .toolbar .morePn{
+	_margin-left: 5px;
+	_margin-left: -10px;
+	position: absolute;
+	width: 15px;
+	height: 26px;
+	display: none;
+	vertical-align: middle;
+}
+
+.damoEditor .toolbar .moreBtn{
+	width: 15px; 
+	height: 26px;
+	background-position: -1302px 0px;
+    background-image: url('images/damoEditor.png');
+}
+
+.damoEditor .toolbar .moreBtn1{
+	 border: 1px solid #666; 
+}
+
+.damoEditor .toolbar .overflowBar{
+	min-width: 30px;
+	left: -180px;
+	position: relative;
+	padding: 5px;
+	z-index: 999;
+	border: 1px solid #666; 
+	visibility: hidden;
+    background: #fefeff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #fefeff 0%, #f0f2f6 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #fefeff 0%,#f0f2f6 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #fefeff 0%,#f0f2f6 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+
+.damoEditor a{
+	text-decoration: underline;
+}
+	
+.damoEditor .buttonDisable{
+    opacity: 0.5;
+    _border: 0px !important;
+    background-color: #none !important;
+}
+.damoEditorBottom {
+    height: 21px;
+    border-top:1px solid #DDDDDD;
+    background:#f6f6f6;
+    width: 100%;
+}
+
+.damoEditorBottomTab {
+    margin:-1px -4px 0 3px;
+    display: block; 
+	float: left;
+    height: 18px;
+    padding: 2px 8px 0px;
+    border: 1px solid #d0d0d0;
+    background-color: #f2f2f2;
+    font-size: 11px;
+    cursor: default;
+    vertical-align: top;
+    letter-spacing:-1px;     
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;	
+}
+.damoEditorBottomTabActive{ 
+    background-color: #fafafa !important;
+    border-top:none;
+    vertical-align: top;
+    height: 19px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;	    
+}
+
+.damoEditorResizer {
+    _display: block; 
+	_width: 150px;
+	margin: 2px auto;
+	cursor: n-resize;
+    _border: 1px solid #d0d0d0;
+	color: #636666;
+	font-size: 11px;
+	text-align: center;
+}
+
+.damoSelectButton{
+	width: 36px;
+}
+
+.damoSelectBox,
+.damoSelectButton{
+    display: inline-block;
+    _height: 22px;
+    margin:1px;
+    border: 1px solid #c6c6c6;
+    border-radius: 2px;
+    cursor: default;
+    vertical-align: middle;
+}
+.damoSelectBox:hover{
+    border: 1px solid #acacac;
+}
+
+.damoSelectBox > hr {display:block; border:0; border-top:1px solid #ccc; margin:1em 0;padding:0;}
+.damoSelectBox .selecttitle > hr {display:block;  margin:1em 0;padding:0;}
+
+.damoSelectBox > .selecttitle{
+    _height: 100%;
+    line-height: 20px;
+    _display: inline-block;
+    float:left;
+    margin-left: 3px;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+    font-size:12px;
+}
+
+.damoDialogMain      .damoSelectButton{
+    border: 1px solid #acacac !important;
+}
+
+.damoEditor .toolbar .damoSelectButton > .damoButton,
+.damoDialogMain      .damoSelectButton > .damoButton{
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin:0px;
+    border: 0px solid #EAEAEA;
+    background-image: url('images/damoEditor.png');
+    vertical-align:top;
+}
+.damoEditor .toolbar .damoSelectButton:hover,
+.damoDialogMain      .damoSelectButton:hover{
+    border: 1px solid #acacac !important;
+    border-radius: 2px;
+    background-color: #fff;
+}
+.damoEditor img{
+	cursor: default;
+}
+
+.damoEditor .toolbar .damoSelectButton .buttonColor,
+.damoDialogMain      .damoSelectButton .buttonColor{
+    width: 12px;
+    height: 4px;
+    background-color: #000000;
+    margin-top: 15px;
+    margin-left: 7px;
+}
+
+.damoDialogMain .videoLabel{
+	float: right;
+	margin-right: 15px;
+}
+
+.damoDialogMain .progressbar4VideoFld{
+	display: inline-block;
+	width: 75%;
+	text-align: center;
+}
+
+.damoDialogMain .progressbar4Video{
+	height: 12px;
+	background-color: skyblue;
+	border-radius: 4px;
+}
+
+.damoDialogMain .progressbar{
+	display: inline-block;
+	width: 95%;
+	padding: 10px;
+}
+
+.damoSelectBox > .dropbutton,
+.damoSelectButton > .dropbutton{
+    _display: inline-block;
+    float: right;
+    width: 15px;
+    height: 24px;
+    background-image: url('images/damoEditor.png');
+}
+
+.damoSelectBoxGroup{
+    margin: 1px -1px 1px 0px;
+    border: 1px solid #acacac !important;
+    background-color:#fbfbfb;
+}
+
+
+.damoSelectBoxPanel{
+    /* overflow: auto; */
+    position: absolute;
+    border: 1px solid #c5c5c5;
+    background-color: #FFFFFF;
+    z-index:9999;
+    padding:10px 0;
+}
+
+.damoSelectBoxPanelColor,.damoSelectBoxPanelTable {
+    padding:10px;
+}
+.damoSelectBoxPanelColor{
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;	
+}
+
+.damoSelectBoxPanel > button{
+  border: 1px solid #7f7f7f;
+  /* height: 22px;
+  padding-bottom:2px;
+  margin-left:2px; 
+  padding:4px;
+  width:46px;
+  margin-top:8px; */
+  padding:0px 4px 2px;
+  font-size:12px; cursor:pointer; margin:0px;
+}
+
+.damoSelectBoxPanel > .damoSelectBoxItem{
+   /*  float: left;
+    width: 95%; */
+    cursor: default;
+    padding:5px 10px 5px 10px;
+    /* font-size: 12px; */
+   /*  line-height:18px; */
+}
+
+.damoSelectBoxPanel > .damoSelectBoxItem > hr {display:block;  margin:10px 0;padding:0;}
+
+.damoSelectBoxPanel > .damoSelectBoxItem:hover,
+.damoSelectBoxPanel > .damoSelectBoxLineheightItem:hover,
+.damoSelectBoxPanel > .damoSelectBoxItem:focus{
+    /* border: 1px solid #FFFFFF !important;
+    background-color: #EAEAEA; */
+    background-color:#f5f5f5;
+}
+
+.damoSelectBoxPanel > .damoSelectBoxLineheightItem{
+   /*  float: left;
+    width: 84%; */
+    cursor: default;
+    padding:5px 0px 5px 10px;
+    font-size: 12px;
+    
+}
+
+.damoSelectBoxPanel > .damoSelectButtonItem{
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;	
+    float: left;
+    cursor: default;
+    margin:2px;
+    width: 11px; 
+    height: 11px; 
+}
+
+.damoSelectBoxPanel > .damoSelectButtonItem:hover{
+    border: 2px solid #333333 !important;
+    background-color: #ffffff;
+}
+
+.damoEditor .damoSelectBoxPanel > .damoSelectBoxItem > h1{margin:5px;}
+.damoEditor .damoSelectBoxPanel > .damoSelectBoxItem > h2{margin:5px;}
+.damoEditor .damoSelectBoxPanel > .damoSelectBoxItem > h3{margin:5px;}
+.damoEditor .damoSelectBoxPanel > .damoSelectBoxItem > h4{margin:5px;}
+.damoEditor .damoSelectBoxPanel > .damoSelectBoxItem > h5{margin:5px;}
+.damoEditor .damoSelectBoxPanel > .damoSelectBoxItem > h6{margin:5px;}
+
+/* .damoSelectBoxPanel > .damoSelectBoxItem{
+    float: left;
+    cursor: default;
+    width: 87%;
+    padding:5px 10px;
+    font-size: 12px;
+    line-height:18px;
+} */
+
+.damoDialog {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99999;
+    overflow: auto;
+}
+
+.damoDialog > .dialog {
+    position: absolute;
+    border: 1px solid #898c95;
+    background: #f1f3f7;
+	font-family:"맑은고딕";
+	padding:0;
+	margin:0; !important;	
+}
+
+.damoDialog > .dialog > .head{
+    _width: 100%;
+    _height: 30px; 
+    _background: #eaeaea;
+    padding:12px 0px 0px 10px; color:#333; font-size:13px;font-weight:bold;
+}
+.damoDialog > .dialog > .closebtn {
+    cursor: default;
+    color: #000;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 18px;
+    height:17px;
+    background-image: url('images/btn_close.png');
+}
+
+.damoDialog > .dialog > .dialogbody {
+    width: 100%; 
+    height:100%;
+    font-family: "굴림";
+    font-size:9pt;
+}
+
+.damoDialog > .dialog .damoSubmitBtn, 
+.damoDialog > .dialog .damoControlBtn {
+  text-decoration: none;
+  background-color: #5c5f61;
+  color: #fff;
+  padding: 1px 8px;
+  border: 1px solid #4d5052;
+  display: inline-block;
+  margin-left:4px;
+  cursor: pointer;
+  height: 22px;
+  line-height: 22px;
+  min-width:60px;
+  text-align:center;
+}
+ 
+.damoDialog > .dialog .damoCancelBtn{
+  text-decoration: none;
+  background-color: #fff;
+  color: #474c52;
+  padding: 1px 8px;
+  border: 1px solid #7f7f7f;
+  display: inline-block; 
+  cursor: pointer;
+  margin-left:4px;
+  height: 22px;
+  line-height: 22px;
+  min-width:60px;
+  text-align:center;
+}
+
+.damoDialogMain { 
+    width: 88%; 
+    padding: 10px; 
+    font-size: 9pt; 
+    display: inline-block;
+    border: 1px solid #b8babc;
+    margin:10px 10px 10px 10px;
+    background:#fff;
+    min-width:250px;
+    color: black;
+}
+.damoDialogMain > hr {display:block; border:0; border-top:1px solid #ccc; margin:1em 0;padding:0;}
+.damoDialogMain p {padding-top:10px;}
+
+.damoDialog .damoDialogBottom {
+    /* height: 24px; */
+    padding:0px 10px 10px 0px;
+    position:relative;
+    text-align:right;
+	font-size: 9pt;
+}
+
+.damoDialogMain .damoRow{ 
+	width: 100%;
+	display: inline-block;
+	margin: 10px 0px;
+}
+
+.damoTab {
+    width: 98%; 
+    _min-height:230px;
+    font-family: "굴림";
+    position:relative; 
+    margin:0 auto;
+    padding:10px 0px;
+    font-size:9pt;
+}
+.damoTabHead {
+    height:21px; 
+    display: inline-block; 
+    padding: 5px 10px 0px;
+    border: 1px solid #d0d0d0;
+    background-color: #f2f2f2;
+    font-size: 12px;
+    cursor: default;
+    margin-left:-1px;
+}
+.damoTabBody {    
+    /* height:160px;  */
+    border: 1px solid #d0d0d0; 
+    padding: 5px; 
+    margin-top:-1px;
+    margin-left:-1px;
+    background-color: #fff;
+}
+.damoTabNone { 
+    border-left: none;
+    border-right: none;  
+}
+.damoTabActive{
+    background-color: #fff;
+    border-bottom: 1px solid #fafafa !important;
+}
+
+.damoTabItem {
+    width: 18px;
+    display: inline-block; 
+    padding: 2px;
+    border: 1px solid #c7c7c7;
+    margin:0 0 -1px -1px;
+    font-size: 12px;
+    text-align:center;
+    cursor: default;
+    background-color: #fff;
+    color:#666666;
+}
+.damoTabItem:hover{
+    background-color: #c3c3c3 !important;
+}
+
+.damoSelectChar{
+    width: 64%;
+    height:24px; 
+    border: 1px solid #c5c5c5;
+    margin-right:1px;
+}
+
+.damoEmoticonItem {
+    width: 22px;
+    height: 22px;
+    display: inline-block; 
+    border: 1px solid white;
+    margin: 2px; 
+    cursor: default;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    color:#666666;
+}
+.damoEmoticonItem:hover{
+    _background-color: #c3c3c3 !important;
+    border: 1px solid #c7c7c7;
+}
+.damoEmosiItem {
+    width: 22px;
+    height: 22px;
+    display: inline-block; 
+    border: 1px solid white;
+    margin: 2px; 
+    cursor: default;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    color:#666666;
+	font-size: 16pt;
+	font-family: segoe ui emoji; /*IE 이모지 색상 추가 20201215*/
+}
+
+
+.damoDialogMain .settingField { width: 50%; display: inline-block; margin-bottom: 5px; }
+
+.damoDialogMain .inputSpinLabel { width: 45%; display: inline-block; font-weight:normal;}
+.damoDialogMain .inputSpinTxt { 
+    border: 0px solid; 
+    width: 95%; 
+    padding-left:4px; 
+    height:22px;
+    /* margin-top: 2px; */
+}
+
+.damoDialogMain label {font-size:9pt; padding:0; margin:0px; color:#555555; text-align:left; font-weight:normal;}
+
+.damoDialogMain .inputText { 
+    border: 1px solid #c5c5c5; 
+    width: 45%; 
+    padding-left:1px; 
+    margin-top: 2px;
+    height:22px;
+}
+
+.damoDialogMain .damoSelect{ width: 45%; padding-left: 2px; height:24px; border:1px solid #c5c5c5; background:#ffffff;}
+
+.damoDialogMain Select{padding:0px; height:24px; border:1px solid #c5c5c5; background:#ffffff;} 
+
+.damoDialogMain input[type=checkbox]{width: auto;}
+.damoDialogMain input[type="text"] {background:#ffffff; -webkit-appearance: none; -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; !important;}
+.damoDialogMain input[type="file"] {display:inline-block;}
+
+.damoDialogMain input.link { border:1px solid #c5c5c5; width: 90%; padding:0px 8px; height:24px;  }
+
+.damoDialogMain .inputSpin{ width: 45%; display: inline-block; border: 1px solid #c5c5c5; position: relative; height: 24px}
+.damoDialogMain .spinButton { 
+    display: inline-block; 
+    width: 20px; 
+    text-align: center; 
+    vertical-align: middle; 
+    margin-top: -1px; /*height: 20px; line-height: 10px; */
+    position: absolute;
+    right: 1px;
+    top: 1px;
+}
+.damoDialogMain .spinButton span {cursor: pointer; height:12px; }
+.damoDialogMain .spinButton span:hover { background-color: #EFEFEF; }
+.damoDialogMain .spinButton .spinUp { font-size: 9px; display: inline-block; width: 20px; color:#757575; border: 1px solid #c5c5c5; border-top:none;position: absolute; top:0px; right:-2px;}
+.damoDialogMain .spinButton .spinUp:before { content: "▲"; }
+.damoDialogMain .spinButton .spinDown { font-size: 9px; display: inline-block; width: 20px; color:#757575;border: 1px solid #c5c5c5; border-top:none; border-bottom:none;position: absolute; top:12px; right:-2px;}
+.damoDialogMain .spinButton .spinDown:before { content: "▼"}
+
+.damoDialogMain .label{ width: 25%; display: inline-block;}
+.damoDialogMain .label{ padding:0; margin:0px; font-size:9pt; color:#000; text-align:left; font-weight:normal; !important;}
+
+.damoDialogMain .textBox{
+    width: 70%;
+    height:24px; 
+    border: 1px solid #c5c5c5 !important;
+    padding-left:10px; 
+}
+
+.damoDialogMain .textInput{
+    width: 100%;
+    height:24px; 
+    border: 1px solid #c5c5c5 !important;
+}
+
+.damoDialogMain .textColumn{
+    width: 70%;
+    display: inline-block;
+}
+
+
+.damoDialogMain .imageFile{
+    width: 250px; 
+    margin-top: 5px; 
+    display: block;
+    text-align: right; 
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+.damoDialogMain .selectBox{
+    width: 73%; 
+}
+
+ .damoLayoutDialog{
+    padding: 1px; 
+    border: 1px rgb(0, 0, 0); 
+    border-collapse: collapse; 
+    border-spacing: 0px; 
+    background-color: rgb(255, 255, 255);
+}
+.damoLayoutDialog td{
+    border: 1px solid black; 
+    padding: 5px;
+}
+.damoLayoutDialog td:hover{
+    background-color: #c3c3c3;
+}
+.damoLayoutDialog .editorLayoutItem{
+    height: 64px;
+    width: 64px;
+    background-image: url('images/damoEditorlayout.png');
+    display: block;
+}
+.damoLayoutDialog .tableLayoutItem{
+    height: 52px;
+    width: 62px;
+    background-image: url('images/damoTableLayout.png');
+    display: block;
+}
+
+.damoLayoutDot{
+    border: 1px #BBBBBB; 
+}
+.damoLayoutDot td{
+    border: 1px dotted #BBBBBB; 
+}
+
+.damoDialogMain .controlColumn { 
+	width: 50%; 
+	display: inline-block
+}
+
+.horizontalRuleItem {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;		
+	border: 1px solid #fff;
+	padding: 10px 20px;
+	min-height: 10px;
+}
+
+.qutationItem:hover,
+.horizontalRuleItem:hover{
+	border: 1px solid #ccc;
+}
+
+.horizontalRuleItem > hr {
+	margin: 0px 0px;
+}
+
+.qutationItem {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;		
+	border: 1px solid #fff;
+	_padding: 10px 20px;
+	min-height: 10px;
+}
+
+/* 
+ * Table
+ */
+ 
+.tablePicker {
+     border-collapse: separate !important;
+     border-spacing: 1px !important;        
+}
+
+.tablePicker > tr > .tablePickerDsp {
+    height:12px; 
+	border: 0px solid; 
+    font-size:12px;
+    padding-bottom:10px;
+}
+
+.tablePicker > tr > .tablePickerCell {
+    width:14px; 
+    height:14px; 
+    border: 1px solid black !important; 
+    font-size:1px;
+    padding: 0px;
+}
+
+.damoSelectedCell {
+    background-color: #85D3F1 !important;
+}
+.gripper{
+    display: none; 
+    position: absolute; 
+    z-index: 99; 
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;	
+}
+
+.gripperShow{
+    border: 1px dotted black;
+}
+        
+/* 
+ * TableResizeHandle
+ */
+
+.damoEditorTableResizeHandle {
+    width:  6px;
+    height: 6px;
+    position: absolute;
+    border: 1px solid black;
+    margin: 2px;
+    z-index: 10000;
+}
+
+.damoEditorCellProp{
+    width: 70px !important;
+    height: 70px;
+    margin-left: 80px;
+    margin-top: 8px;
+    vertical-align: top;    
+}
+
+.damoEditorCellPropOutline{
+    width: 70px; 
+    height: 53px;
+}
+
+.damoEditorCellPropOutlineLeft{
+    width: 15px; 
+    height: 50px; 
+    float: left;
+}
+    
+.damoEditorCellPropPreview{
+    width: 50px; 
+    height: 50px; 
+    border: 2px solid #5E5E5E; 
+    float:left;
+}
+
+.damoEditorCellPropHandlerTop{
+    width: 10px; 
+    height: 9px; 
+    border: 1px solid #5E5E5E;
+    border-top: 2px solid; 
+    margin-top: 0px; 
+    display:inline-block;
+    background-color: #C0C0C0;
+}    
+    
+.damoEditorCellPropHandlerBottom{
+    width: 10px; 
+    height: 9px; 
+    border: 1px solid #5E5E5E;
+    border-bottom: 2px solid;
+    margin-top: 28px; 
+    display:inline-block;
+    background-color: #C0C0C0;
+}    
+    
+.damoEditorCellPropHandlerLeft{
+    width: 9px; 
+    height: 10px; 
+    border: 1px solid #5E5E5E; 
+    border-left: 2px solid; 
+    margin-left: 15px;
+    margin-top: 3px; 
+    display:inline-block; 
+    background-color: #C0C0C0;
+}
+
+.damoEditorCellPropHandlerRight{
+    width: 9px; 
+    height: 10px; 
+    border: 1px solid #5E5E5E;
+    border-right: 2px solid;
+    margin-left: 30px;
+    margin-top: 3px; 
+    display:inline-block; 
+    background-color: #C0C0C0;
+}
+
+.damoEditorCellGuideMsg{
+	position:relative;
+	top: -40px;
+	height: 0px;
+	color: #555555;
+}
+
+/* 
+ * ContextMenu
+ */
+.damoContextMenu{
+    position: absolute;
+    border: 1px solid #b8babc;
+    background-color: white;
+    z-index: 10001;
+    padding:1px;
+}
+.damoContextMenuSeperate{
+    width: 100%;
+    height:1px;
+    background-color: #ddd;
+    cursor: default;
+}
+.damoContextMenuItem{
+    background-color: white;
+    cursor: default;
+	min-width: 150px;
+}
+.damoContextMenuItem:hover{
+    background: #eaeaea;
+}
+
+.damoContextMenuItemHead{
+    display: inline-block;
+    width: 25px;
+    height:20px;
+    background-image: url('images/damoEditor.png');
+}
+
+.damoContextMenuItemBody{
+    display: inline-block;
+    height:20px;
+    margin-left: 10px;
+    font-family: 굴림;
+    font-size: 9pt;
+    color: black;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+.damoRibbon {
+	display: none;
+	position: absolute;
+    width: 7px;
+    height:7px;
+	border: 1px solid;	
+	background-color: white;
+	z-index:9999;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;		
+}            
+
+/* -----------------------------------------------
+ * Color Picker
+ */
+/* Common stuff */
+
+.picker-wrapper, 
+.slide-wrapper {
+    position: relative;
+    float: left;
+}
+.picker-indicator,
+.slide-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+.picker,
+.slide {
+    cursor: crosshair;
+    float: left;
+}
+
+
+/* Small skin */
+
+.cp-small {
+    _padding: 5px;
+    background-color: white;
+    float: left;
+    _border-radius: 5px;
+}
+.cp-small .picker {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;	
+    width: 138px; /*156*/
+    height: 140px;
+}
+.cp-small .slide {
+    width: 15px;
+    height: 140px;
+}
+.cp-small .slide-wrapper {
+    margin-left: 5px;
+}
+.cp-small .picker-indicator {
+    width: 1px;
+    height: 1px;
+    border: 1px solid black;
+    background-color: white;
+}
+.cp-small .slide-indicator {
+    width: 100%;
+    height: 2px;
+    left: 0px;
+    background-color: black;
+}
+
+.cp {
+   margin: 6px 0px;
+}
+
+.colorStatus {
+   clear: both;
+   float: left;
+   width: 176px;
+   position: relative;
+   background-color: white;
+}
+
+.colorStatus > div {
+    float: left;
+    _margin-right:2px;
+}
+
+.colorStatus .selectedhex {
+   width: 60px;
+   height: 20px;
+   border: 1px solid gray;
+   font-size: 10pt;
+   padding-left:6px;
+   margin-right:2px
+}
+
+.colorStatus .selectedcolor {
+   width: 100px;
+   height: 20px;
+   float: left;
+   border: 1px solid black;
+}
+
+.colorStatus .textcolor {
+   margin-left: 5px;
+}   
+
+.damoListView {
+	list-style: none;
+	border: 1px solid #b8babc;
+	margin: 0;
+	padding: 0;
+	overflow-y: scroll;
+	cursor:default;
+	line-height: 1em;
+}
+.damoListView > li {
+	width: 93%;
+	margin: 0;
+	padding: 0px 10px;
+}
+.damoListView > li:hover {
+	background-color: lightgray;
+}
+.damoListView .p1 {
+	display:inline-block;
+	width: 70%;
+	overflow: hidden; 
+	white-space: nowrap; 
+	text-overflow: ellipsis;
+	padding: 0px;
+}
+.damoListView .p2 {
+	display:inline-block;
+	width: 25%;
+	overflow: hidden;
+	margin-left: 5px;
+	padding: 0px;
+}
+.damoInputPn{
+	width: 95%;
+	min-height: 70px;
+	padding: 5px 10px;
+	border: 1px solid lightgray;
+	display: none;
+}
+.damoInputPn > div {
+	display: inline-block;
+	margin-top: 15px;
+}
+.damoTitle {
+	float: left;
+	margin: 0px;
+	width: 60px;
+	padding-top: 0px !important;
+}
+.input {
+	float: left;
+	border: 1px solid;
+}
+.damoSelected{
+	border: 2px dotted red;	
+}
+	
+.layout_default.picker_wrapper {
+	width: 15em !important; 
+	padding: 0 !important; 
+}
+
+.picker_wrapper {
+	background: white;
+	box-shadow: 0 !important; 
+}
+
+.layout_default .picker_sample {
+	display:none;
+}
+
+#colorPicker1 {
+	display: inline-block;
+	_border: 4px dashed tomato;
+}
+#colorPicker1 .picker_sample, #colorPicker .picker_done {
+	display: none;
+}
+#colorPicker1 .picker_editor {
+	width: 100%;
+}
+
+.damoImageProperty {
+	display: none;
+	position: absolute;
+	background-color: transparent;
+	z-index:9999;
+}
+
+.damoImageProperty > div {
+  width:32px;
+  height:32px; 
+  background-image:url('images/imageProp.png');
+  border-radius: 25px;
+  display: inline-block;
+  margin-left: 5px;
+  border: 1px solid green;
+  background-color:  #9ef17b;
+  _background-color: transparent;  
+}
+
+.damoImagePropertyMenu1 {
+  background-position: 0px 0px;
+  z-index:9999;
+}
+
+.damoImagePropertyMenu2 {
+  background-position: 33px 0px;
+  z-index:9999;
+}
+

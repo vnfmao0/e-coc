@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="callSettersOnNulls" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+    </settings>
+
+    <typeAliases>
+        <!-- returnType map인 경우 key값을 camel 형식으로 바꾸기 위해... (LOWER_HASH_MAP -> lowerHashMap) -->
+        <typeAlias type="kr.co.haesungds.utils.LowerHashMap" alias="lowerHashMap"/>
+
+        <typeAlias type="kr.co.haesungds.security.dto.UserDto" alias="userDto"/>
+        <typeAlias type="kr.co.haesungds.utils.file.model.EccFile" alias="eccFile"/>
+
+        <typeAlias type="kr.co.haesungds.ecoc.admin.model.CmmLegCode" alias="cmmLegCode"/>
+        <typeAlias type="kr.co.haesungds.ecoc.admin.model.RoleUser" alias="roleUser"/>
+        <typeAlias type="kr.co.haesungds.ecoc.admin.model.DocManage" alias="docManage"/>
+        <typeAlias type="kr.co.haesungds.ecoc.education.model.ECocInfo" alias="eCocInfo"/>
+
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.InstantTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.LocalDateTimeTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.LocalDateTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.LocalTimeTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.OffsetDateTimeTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.OffsetTimeTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.ZonedDateTimeTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.YearTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.MonthTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.YearMonthTypeHandler" />
+        <typeHandler handler="org.apache.ibatis.type.JapaneseDateTypeHandler" />
+    </typeHandlers>
+</configuration>

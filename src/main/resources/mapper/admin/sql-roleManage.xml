@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.ecoc.admin.mapper.AdminMapper">
+    <select id="selectUserList" parameterType="map" resultType="userDto">
+        SELECT CU.USERID
+             , CU.PASSWD
+             , CU.USER_NM
+             , CU.DEPT_CD
+             , CU.DEPT_NM
+             , CU.POS_CD
+             , CU.JIKGUN_CD
+             , CU.WORK_TP
+             , CU.PROD_SITE
+             , CU.MOB_NO
+             , CU.TEL_NO
+             , CU.USER_MAIL
+             , CU.USE_YN
+             , CU.PW_CRT_DTTM
+             , CU.FAULT_CNT
+             , CU.LAST_DTTM
+             , CU.LAST_IP
+             , CU.PWINIT_YN
+             , CU.RANDOM_PWD
+             , CU.ATT_GRP_ID
+             , CU.LAST_DEPT_CD
+             , CU.INS_DTTM
+             , CU.INS_USERID
+             , CU.UPD_DTTM
+             , CU.UPD_USERID
+             , CU.EP_LOGINID
+             , CU.EPID
+             , CU.EP_INTF_DTTM
+             , CU.PASSWD_CHG_DT
+             , CU.INS_NO
+             , CU.UPD_NO
+             , CU.DEL_NO
+             , CU.INFO1
+             , CU.INFO2
+             , CU.INFO3
+             , CU.INFO4
+             , CU.INFO5
+             , CU.INFO6
+             , CU.INFO7
+             , CU.INFO8
+             , CU.INFO9
+             , CU.INFO10
+        FROM   LEGUM.CMM_USER CU
+             , LEGUM.CMM_LEG_USER CLU
+        WHERE  CU.USERID = CLU.USERID
+        AND    CLU.LEG_CD = #{legCd}
+        <if test="userNm != null and userNm != ''">
+        AND    CU.USER_NM LIKE '%' || #{userNm} || '%'
+        </if>
+
+    </select>
+
+    <select id="selectRoleInfoByUid" parameterType="map" resultType="roleUser">
+        SELECT CLC.LEG_CD
+             , CLC.CODE AS ROLE_ID
+             , CLC.CODE_NM AS ROLE_NM
+             , #{userid} as USERID
+             , CLRU.APLY_YN
+             , CLRU.READ_ABLE
+             , CLRU.WRITE_ABLE
+             , CLRU.UPDATE_ABLE
+             , CLRU.DELETE_ABLE
+             , CLRU.DOWNLOAD_ABLE
+             , CLRU.FN1
+             , CLRU.FN2
+             , CLRU.FN3
+             , CLRU.FN4
+             , CLRU.FN5
+             , CLRU.INS_USERID
+             , CLRU.INS_DTTM
+             , CLRU.UPD_USERID
+             , CLRU.UPD_DTTM
+        FROM   CMM_LEG_CODE CLC
+        LEFT OUTER JOIN CMM_LEG_ROLE_USER CLRU
+        ON     CLC.CODE = CLRU.ROLE_ID
+        AND    CLRU.LEG_CD = #{legCd}
+        AND    CLRU.USERID = #{userid}
+        WHERE  CLC.GRP_CD = 'ECC_ROLE'
+        AND    CLC.LEG_CD = #{legCd}
+        ORDER BY CLC.SORT_ORD
+    </select>
+
+    <update id="updateUserRoleInfo" parameterType="roleUser">
+        MERGE INTO CMM_LEG_ROLE_USER CLRU
+            USING DUAL
+            ON (CLRU.LEG_CD = #{legCd} AND CLRU.ROLE_ID = #{roleId} AND CLRU.USERID = #{userid})
+            WHEN MATCHED THEN
+                UPDATE SET CLRU.APLY_YN = #{aplyYn}
+                    , CLRU.READ_ABLE = #{readAble}
+                    , CLRU.WRITE_ABLE = #{writeAble}
+                    , CLRU.UPDATE_ABLE = #{updateAble}
+                    , CLRU.DELETE_ABLE = #{deleteAble}
+                    , CLRU.DOWNLOAD_ABLE = #{downloadAble}
+                    , CLRU.FN1 = #{fn1}
+                    , CLRU.FN2 = #{fn2}
+                    , CLRU.FN3 = #{fn3}
+                    , CLRU.FN4 = #{fn4}
+                    , CLRU.FN5 = #{fn5}
+                    , CLRU.UPD_USERID = #{userid}
+                    , CLRU.UPD_DTTM = SYSDATE
+            WHEN NOT MATCHED THEN
+                INSERT (LEG_CD, ROLE_ID, ROLE_NM, USERID, APLY_YN, READ_ABLE, WRITE_ABLE, UPDATE_ABLE, DELETE_ABLE,
+                        DOWNLOAD_ABLE, FN1, FN2, FN3, FN4, FN5, INS_USERID, INS_DTTM, UPD_USERID, UPD_DTTM)
+                    VALUES ( #{legCd}
+                           , #{roleId}
+                           , #{roleNm}
+                           , #{userid}
+                           , NVL(#{aplyYn}, 'N')
+                           , NVL(#{readAble}, 'N')
+                           , NVL(#{writeAble}, 'N')
+                           , NVL(#{updateAble}, 'N')
+                           , NVL(#{deleteAble}, 'N')
+                           , NVL(#{downloadAble}, 'N')
+                           , NVL(#{fn1}, 'N')
+                           , NVL(#{fn2}, 'N')
+                           , NVL(#{fn3}, 'N')
+                           , NVL(#{fn4}, 'N')
+                           , NVL(#{fn5}, 'N')
+                           , #{insUserid}
+                           , SYSDATE
+                           , #{updUserid}
+                           , SYSDATE)
+    </update>
+</mapper>

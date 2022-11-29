@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--  <meta name="description" content="viho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">-->
+<!--  <meta name="keywords" content="admin template, viho admin template, dashboard template, flat admin template, responsive admin template, web app">-->
+  <meta name="author" content="pixelstrap">
+  <link rel="icon" href="../img/hs_logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="../img/hs_logo.png" type="image/x-icon">
+  <title>Eye-CoC</title>
+
+  <!-- 공통 헤드(CSS)-->
+  <th:block th:replace="/thymeleaf/layout/fragments/head :: headFragment"></th:block>
+
+</head>
+<body>
+<!-- Loader starts-->
+<div class="loader-wrapper">
+  <div class="theme-loader">
+    <div class="loader-p"></div>
+  </div>
+</div>
+<!-- Loader ends-->
+<!-- page-wrapper Start       -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+
+
+
+  <!-- Page Body Start-->
+  <div class="page-body-wrapper sidebar-icon">
+    <!-- Page Sidebar Start-->
+    <th:block th:replace="/thymeleaf/layout/fragments/script :: scriptFragment"></th:block>
+    <!-- Page Sidebar Ends-->
+    <div class="page-body" style="padding: 15px !important; margin-top: 0px; height: 100vh;">
+      <!-- Container-fluid starts-->
+      <th:block layout:fragment="content"></th:block>
+      <!-- Container-fluid Ends-->
+    </div>
+    <!-- footer start-->
+
+    <!-- footer Ends-->
+  </div>
+</div>
+
+
+
+</body>
+</html>

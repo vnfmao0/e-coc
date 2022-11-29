@@ -1,0 +1,79 @@
+<!-- 공급업체관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout_chkUserid}">
+
+<th:block layout:fragment="content">
+    <style>
+        video::-internal-media-controls-download-button {display:none;}
+        /*video::-webkit-media-controls { overflow:hidden; }
+        video::-webkit-media-controls-enclosure { width:calc(100% + 32px); margin-left:auto; }*/
+    </style>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>교육 동영상 상세</h5>
+                    <span>현장작업자 실무 교육을 위한 교육영상을 확인합니다.</span>
+                </div>
+                <div class="card-body">
+
+                    <div class="row mt-3">
+                        <div class="col-8">
+                            ▶ 교육용 동영상
+                        </div>
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-primary" id="btnPlayStop" onclick="playStop()">play</button>
+                        </div>
+                    </div>
+                    <div class="border p-2 mb-3" style="background-color: #f5f7fb !important;">
+                        <!--
+                        <div class="row">
+                            <div class="col-12" th:if="${#strings.isEmpty(educationInfo.qrUrl) == false}">
+                                <video style="width: 100vw; height: 100vh; max-height: 500px;" controls th:src="${educationInfo.qrUrl}"></video>
+                            </div>
+                        </div>
+                        -->
+                        <div class="tab-pane" id="video-links" role="tabpanel" aria-labelledby="video-link">
+                            <div class="row">
+                                <div class="col-xl-12 xl-100 box-col-12">
+                                    <!--<div class="row search-vid-block">
+                                        <div class="col-xl-12 xl-50 box-col-12">
+                                            <div class="embed-responsive embed-responsive-21by9 lg-mt">
+                                                <iframe class="w-100" style="max-height: 500px; height: 100vh;" th:src="${educationInfo.qrUrl}" allowfullscreen=""></iframe>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                    <video class="form-control p-0" id="video" th:src="|/onpage${educationInfo.qrUrl}|"></video>
+                                    <!--<video class="form-control p-0" id="video" src="D:/attache/ecc/movie/70.mp4"></video>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function ($) {
+            $("video").bind( 'contextmenu', function() { return false; } );
+        });
+
+        function playStop() {
+            console.log("playStop()");
+
+            if ($("#btnPlayStop").text() == "play") {
+                $("#video").get(0).play();
+                $("#btnPlayStop").text("stop");
+            } else {
+                $("#video").get(0).pause();
+                $("#btnPlayStop").text("play")
+            }
+
+
+        }
+    </script>
+
+</th:block>
+</html>

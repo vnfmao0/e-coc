@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 사용자검색 시작 -->
+<th:block th:fragment="userPopup">
+
+    <script type="text/javascript">
+        ///// 부서팝업
+        var dataProvider_empPop, gridContainer_empPop, gridView_empPop;
+        var httpRequest_empPop;
+        var param;
+        var current_empPop,value_empPop;
+
+        var fields_empPop = [
+            {  fieldName: "USERID",		   dataType: "text",  },
+            {  fieldName: "USER_NM",	   dataType: "text",  },
+            {  fieldName: "DEPT_NM",	   dataType: "text",  },
+            {  fieldName: "POS_NM",		   dataType: "text",  },
+            {  fieldName: "USER_MAIL",	   dataType: "text",  },
+            {  fieldName: "TEL_NO",		   dataType: "text",  },
+            {  fieldName: "POS_CD",		   dataType: "text",  },
+            {  fieldName: "PROD_SITE",	   dataType: "text",  },
+            {  fieldName: "WORK_TP",	   dataType: "text",  },
+            {  fieldName: "JIKGUN_CD",	   dataType: "text",  },
+            {  fieldName: "PROD_SITE_NM",  dataType: "text",  },
+            {  fieldName: "DEPT_CD",	   dataType: "text",  },
+            {  fieldName: "WORK_TP_NM",	   dataType: "text",  },
+            {  fieldName: "JIKGUN_NM",	   dataType: "text",  },
+        ];
+
+        var columns_empPop = [
+            {  name: "USERID", 		  fieldName: "USERID", 		  type: "data", 	width: "90",   header: { 	text:  "사번",          },  },
+            {  name: "USER_NM", 	  fieldName: "USER_NM", 	  type: "data", 	width: "90",   header: { 	text:  "이름",          },  },
+            {  name: "DEPT_NM", 	  fieldName: "DEPT_NM", 	  type: "data", 	width: "150",  header: { 	text:  "부서명",        },  },
+            {  name: "POS_NM", 		  fieldName: "POS_NM", 		  type: "data", 	width: "100",  header: { 	text:  "직급",          },  },
+            {  name: "USER_MAIL", 	  fieldName: "USER_MAIL", 	  type: "data", 	width: "120",  header: { 	text:  "E-mail",        },  },
+            {  name: "TEL_NO", 		  fieldName: "TEL_NO", 		  type: "data", 	width: "90",   header: { 	text:  "전화번호",      },  },
+            {  name: "POS_CD", 		  fieldName: "POS_CD", 		  type: "data", 	width: "90",   header: { 	text:  "직급코드",      },  },
+            {  name: "PROD_SITE", 	  fieldName: "PROD_SITE", 	  type: "data", 	width: "90",   header: { 	text:  "생산처구분",    },  },
+            {  name: "WORK_TP", 	  fieldName: "WORK_TP", 	  type: "data", 	width: "90",   header: { 	text:  "근무형태",      },  },
+            {  name: "JIKGUN_CD", 	  fieldName: "JIKGUN_CD", 	  type: "data", 	width: "90",   header: { 	text:  "직군코드",      },  },
+            {  name: "PROD_SITE_NM",  fieldName: "PROD_SITE_NM",  type: "data", 	width: "90",   header: { 	text:  "생산처구분명",  },  },
+            {  name: "DEPT_CD", 	  fieldName: "DEPT_CD", 	  type: "data", 	width: "90",   header: { 	text:  "부서코드",      },  },
+            {  name: "WORK_TP_NM", 	  fieldName: "WORK_TP_NM", 	  type: "data", 	width: "90",   header: { 	text:  "근무형태",      },  },
+            {  name: "JIKGUN_NM", 	  fieldName: "JIKGUN_NM", 	  type: "data", 	width: "90",   header: { 	text:  "직급명",        },  },
+        ];
+
+        function setProvider_empPop(workTp) {
+
+            param = {
+                empCdPopup : $('#empCdPopup').val(),
+                empNmPopup : $('#empNmPopup').val(),
+                workTpList : workTp
+            };
+
+            console.log(param);
+
+            httpRequest_empPop = new XMLHttpRequest();
+            httpRequest_empPop.onreadystatechange = loadData_empPop;
+            httpRequest_empPop.open("POST", "/cmm/popup/userSearch", true);
+            //httpRequest_empPop.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpRequest_empPop.setRequestHeader("accept", "application/json");
+            httpRequest_empPop.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+            httpRequest_empPop.send(JSON.stringify(param));
+        }
+
+        function loadData_empPop() {
+
+            if (httpRequest_empPop.readyState == XMLHttpRequest.DONE) {
+
+                if (httpRequest_empPop.status == 200
+                    || httpRequest_empPop.status == 201) {
+                    //alert(httpRequest_empPop.status);
+                    data2 = JSON.parse(httpRequest_empPop.responseText);
+                    //alert(data2);
+                    dataProvider_empPop.fillJsonData(data2, {
+                        fillMode : "set"
+                    });
+                    gridView_empPop.refresh();
+
+                }
+            }
+        }
+
+        function createGrid_empPop(container2, workTp) {
+
+            dataProvider_empPop = new RealGrid.LocalDataProvider();
+            gridView_empPop = new RealGrid.GridView(container2);
+
+            gridView_empPop.setDataSource(dataProvider_empPop);
+            dataProvider_empPop.setFields(fields_empPop);
+            gridView_empPop.setColumns(columns_empPop);
+
+            gridView_empPop.displayOptions.emptyMessage = "표시할 데이타가 없습니다.";
+            gridView_empPop.displayOptions.rowHeight = 36;
+            gridView_empPop.header.height = 40;
+            gridView_empPop.footer.height = 40;
+            gridView_empPop.stateBar.width = 30;
+            gridView_empPop.editOptions.insertable = false;
+            gridView_empPop.editOptions.appendable = false;
+            gridView_empPop.editOptions.editable = false;
+            gridView_empPop.footers.visible = false;//하단 소계 감추기
+            gridView_empPop.setCheckBar({  exclusive: true, visible: true    });
+            //상태바 표시여부
+            gridView_empPop.setStateBar({  visible: false  });
+
+            //그리드 이벤트 설정
+            registerCallback_empPop();
+
+            //get으로 넘길 함수
+            // menu = "/commempPopup.do?empCdPopup="+$('#empCdPopup').val()+"&empNmPopup="+$('#empNmPopup').val();
+
+            setProvider_empPop(workTp);
+
+        }
+
+
+        var parentGrid = "";
+        function start_empPop(id, name, grid) {
+            /*
+            if(gridView_empPop != null){
+                empPopDestrory();
+            }*/
+
+            //그리드 팝업이 아닐때
+            if (grid != "noticeGrid") {
+                $('#empCdPopup').val(id);
+                $('#empNmPopup').val(name);
+            }
+
+            parentGrid = grid;
+
+            createGrid_empPop("empPopupGrid");
+        }
+        function start_empPopByWorkTp(id, name, workTp) {
+            $('#empCdPopup').val(id);
+            $('#empNmPopup').val(name);
+
+            console.log(workTp);
+            createGrid_empPop("empPopupGrid", workTp);
+        }
+
+        // domloaded를 대신 써도 됩니다.
+
+        window.onunload = function() {
+
+            dataProvider_empPop.clearRows();
+
+            gridView_empPop.destroy();
+            dataProvider_empPop.destroy();
+
+            gridView_empPop = null;
+            dataProvider_empPop = null;
+        }
+
+        //클릭 이벤트
+        function registerCallback_empPop() {
+            gridView_empPop.onCellClicked = function(grid, clickData) {
+                gridView_empPop.checkRow(clickData.itemIndex, true, true, true);
+            }
+
+            gridView_empPop.onCellDblClicked = function(grid, clickData) {
+
+                userPopReturnValue(parentGrid, dataProvider_empPop.getJsonRows(clickData.itemIndex, clickData.itemIndex));
+
+            }
+
+        }
+
+        //부서팝업 조회
+        $(document).on('click', '#empPopupSerarch', function() {
+
+            //get으로 넘길 함수
+            setProvider_empPop();
+        });
+
+        function setUser() {
+            // 배열로 넘겨야함.
+            userPopReturnValue(parentGrid, [dataProvider_empPop.getJsonRow(gridView_empPop.getCheckedRows()[0])]);
+            //수동으로 모달 닫기
+            $("#userPopup").modal('hide');
+
+        }
+        //부서팝업 그리드 해제
+        function empPopDestrory() {
+            dataProvider_empPop.clearRows();
+
+            gridView_empPop.destroy();
+            dataProvider_empPop.destroy();
+
+            gridView_empPop = null;
+            dataProvider_empPop = null;
+        }
+    </script>
+
+    <div class="modal fade" id="userPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schUser">사용자 검색</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="mb-3">
+                                    <label>사용자ID</label>
+                                    <input class="form-control" type="text" id="empCdPopup" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="mb-3">
+                                    <label>사용자명</label>
+                                    <input class="form-control" type="text" id="empNmPopup" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="mb-3 text-end text-bottom">
+                                    <label>&nbsp;</label>
+                                    <!--<input class="form-control" type="text" id="popProNm" placeholder="제조사">-->
+                                    <button type="button" id="empPopupSerarch" class="form-control btn btn-primary text-white">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3" id="empPopupGrid" style="width:100%; height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">닫기</button>
+                    <button class="btn btn-primary" type="button" onclick="setUser();">선택</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div id="userPopup" class="pop_wrap">
+        &lt;!&ndash; 상단 타이틀 &ndash;&gt;
+        <div class="pop_header">사용자정보</div>
+        &lt;!&ndash; 버튼 &ndash;&gt;
+        <div class="pop_btn_wrap">
+            <div id="invClose" class="pop_btn02">닫기</div>
+            <div id="empPopupSerarch" class="pop_btn01">조회</div>
+        </div>
+        &lt;!&ndash; 조회조건 &ndash;&gt;
+        <div class="pop_sch_wrap">
+            <table width="100%" border="0">
+                <tbody>
+                <tr>
+                    <td class="pop_p_w01">사용자ID</td>
+                    <td><input type="text" id="empCdPopup" name="empCdPopup"></td>
+                    <td class="pop_p_w01">사용자명</td>
+                    <td><input type="text" id="empNmPopup" name="empNmPopup"></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+        &lt;!&ndash; 그리드 &ndash;&gt;
+        <div class="pop_grid_wrap">
+            <div id="empPopupGrid" style="width:631px; height:400px;"></div>
+        </div>
+    </div>-->
+
+</th:block>
+<!-- 사용자검색 끝 -->
+
+<!-- 주소검색 시작 -->
+<th:block th:fragment="postSearchPopup">
+    <div id="postSearchPopup" class="container-fluid w-50 h-75">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h5>우편번호 검색</h5>
+                        <span>도로명주소 또는 지번주소를 검색합니다.</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <div class="mb-3 row">
+<!--                                <label class="col-sm-3 col-form-label" for="inputPassword3">선택</label>-->
+                                <div class="input-group">
+                                    <select class="m-r-5 form-select">
+                                        <option>Low</option>
+                                        <option>Medium</option>
+                                        <option>High</option>
+                                        <option>Urgent</option>
+                                    </select>
+                                    <select class="m-r-5 form-select">
+                                        <option>Low</option>
+                                        <option>Medium</option>
+                                        <option>High</option>
+                                        <option>Urgent</option>
+                                    </select>
+                                    <input class="w-25 form-control" id="schAddress" type="text" placeholder="이하 주소를 입력하세요">
+                                    <span class="input-group-text btn btn-outline-primary btn-right icon-search" onclick="openPostPop()">검색</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div id="address_list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var db = {
+            loadData: function(filter) {
+                return $.ajax({
+                    type: "POST",
+                    url: "/p1611/selectCmmCodeList",
+                    data: filter
+                });
+            }
+        };
+        window.db = db;
+        (function($) {
+            "use strict";
+            $("#address_list").jsGrid({
+                width: "100%",
+                filtering: false,
+                editing: false,
+                inserting: false,
+                sorting: false,
+                paging: true,
+                autoload: true,
+                pageSize: 7,
+                pageButtonCount: 5,
+                deleteConfirm: "Do you really want to delete the client?",
+                controller: db,
+                fields: [
+                    { name: "grpCd", type: "text", width: 80, title: "순번"},
+                    { name: "code", type: "text", width: 344, title: "주소"},
+                    { name: "codeNm", type: "text", width: 100, title: "우편번호"},
+                    { name: "codeNm", type: "text", width: 80, title: "선택"}
+                ]
+            });
+        })(jQuery);
+    </script>
+</th:block>
+<!-- 주소검색 끝 -->
+
+<!-- 주소검색Api 시작 -->
+<th:block th:fragment="postApiPopup2">
+
+    <script type="text/javascript">
+        ///// 부서팝업
+        var dataProvider_addrPop, gridView_addrPop;
+        var httpRequest_addrPop;
+        var param;
+
+        var fields_addrPop = [
+            {		 fieldName: "roadAddr",		 dataType: "text",     },   //전체 도로명주소
+            {		 fieldName: "roadAddrPart1", dataType: "text",     },   //도로명주소(참고항목 제외)
+            {		 fieldName: "roadAddrPart2", dataType: "text",     },   //도로명주소 참고항목
+            {		 fieldName: "jibunAddr",	 dataType: "text",     },   //지번주소
+            {		 fieldName: "engAddr",		 dataType: "text",     },   //도로명주소(영문)
+            {		 fieldName: "zipNo",		 dataType: "text",     },   //우편번호
+            {		 fieldName: "admCd",		 dataType: "text",     },   //행정구역코드
+            {		 fieldName: "rnMgtSn",		 dataType: "text",     },   //도로명코드
+            {		 fieldName: "bdMgtSn",		 dataType: "text",     },   //건물관리번호
+            {		 fieldName: "detBdNmList",	 dataType: "text",     },   //상세건물명
+            {		 fieldName: "bdNm",		     dataType: "text",     },   //건물명
+            {		 fieldName: "bdKdcd",		 dataType: "text",     },   //공동주택여부(1 : 공동주택, 0 : 비공동주택)
+            {		 fieldName: "siNm",		     dataType: "text",     },   //시도명
+            {		 fieldName: "sggNm",		 dataType: "text",     },   //시군구명
+            {		 fieldName: "emdNm",		 dataType: "text",     },   //읍면동명
+            {		 fieldName: "liNm",		     dataType: "text",     },   //법정리명
+            {		 fieldName: "rn",		     dataType: "text",     },   //도로명
+            {		 fieldName: "udrtYn",		 dataType: "text",     },   //지하여부(0 : 지상, 1 : 지하)
+            {		 fieldName: "buldMnnm",		 dataType: "text",     },   //건물본번
+            {		 fieldName: "buldSlno",		 dataType: "text",     },   //건물부번
+            {		 fieldName: "mtYn",		     dataType: "text",     },   //산여부(0 : 대지, 1 : 산)
+            {		 fieldName: "lnbrMnnm",		 dataType: "text",     },   //지번본번(번지)
+            {		 fieldName: "lnbrSlno",		 dataType: "text",     },   //지번부번(호)
+            {		 fieldName: "emdNo",		 dataType: "text",     },   //읍면동일련번호
+            {		 fieldName: "hstryYn",		 dataType: "text",     },   //변동이력여부(0: 현행 주소정보, 1: 요청변수의 keyword(검색어)가 변동된 주소정보에서 검색된 정보)
+            {		 fieldName: "relJibun",		 dataType: "text",     },   //관련지번
+            {		 fieldName: "hemdNm",		 dataType: "text",     },   //관할주민센터
+        ];
+
+        var columns_addrPop = [
+            {		 name: "roadAddr",      fieldName: "roadAddr",		type: "data",   width: "275"    , visible: true      ,header: { 		 text:  "전체 도로명주소",         },  styleName: "left-column" },   //전체 도로명주소
+            {		 name: "roadAddrPart1", fieldName: "roadAddrPart1", type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "도로명주소(참고항목 제외)", },   },   //도로명주소(참고항목 제외)
+            {		 name: "roadAddrPart2", fieldName: "roadAddrPart2", type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "도로명주소 참고항목",      },   },   //도로명주소 참고항목
+            {		 name: "jibunAddr",     fieldName: "jibunAddr",	    type: "data",   width: "275"    , visible: true      ,header: { 		 text:  "지번주소",                },  styleName: "left-column"   },   //지번주소
+            {		 name: "engAddr",       fieldName: "engAddr",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "도로명주소(영문)",                },   },   //도로명주소(영문)
+            {		 name: "zipNo",         fieldName: "zipNo",		    type: "data",   width: "90"     , visible: true      ,header: { 		 text:  "우편번호",                },   },   //우편번호
+            {		 name: "admCd",         fieldName: "admCd",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "행정구역코드",                },   },   //행정구역코드
+            {		 name: "rnMgtSn",       fieldName: "rnMgtSn",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "도로명코드",                },   },   //도로명코드
+            {		 name: "bdMgtSn",       fieldName: "bdMgtSn",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "건물관리번호",                },   },   //건물관리번호
+            {		 name: "detBdNmList",   fieldName: "detBdNmList",	type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "상세건물명",                },   },   //상세건물명
+            {		 name: "bdNm",          fieldName: "bdNm",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "건물명",                },   },   //건물명
+            {		 name: "bdKdcd",        fieldName: "bdKdcd",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "공동주택여부",                },   },   //공동주택여부(1 : 공동주택, 0 : 비공동주택)
+            {		 name: "siNm",          fieldName: "siNm",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "시도명",                },   },   //시도명
+            {		 name: "sggNm",         fieldName: "sggNm",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "시군구명",                },   },   //시군구명
+            {		 name: "emdNm",         fieldName: "emdNm",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "읍면동명",                },   },   //읍면동명
+            {		 name: "liNm",          fieldName: "liNm",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "법정리명",                },   },   //법정리명
+            {		 name: "rn",            fieldName: "rn",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "도로명",                },   },   //도로명
+            {		 name: "udrtYn",        fieldName: "udrtYn",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "지하여부",                },   },   //지하여부(0 : 지상, 1 : 지하)
+            {		 name: "buldMnnm",      fieldName: "buldMnnm",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "건물본번",                },   },   //건물본번
+            {		 name: "buldSlno",      fieldName: "buldSlno",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "건물부번",                },   },   //건물부번
+            {		 name: "mtYn",          fieldName: "mtYn",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "산여부",                },   },   //산여부(0 : 대지, 1 : 산)
+            {		 name: "lnbrMnnm",      fieldName: "lnbrMnnm",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "지번본번(번지)",                },   },   //지번본번(번지)
+            {		 name: "lnbrSlno",      fieldName: "lnbrSlno",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "지번부번(호)",                },   },   //지번부번(호)
+            {		 name: "emdNo",         fieldName: "emdNo",		    type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "읍면동일련번호",                },   },   //읍면동일련번호
+            {		 name: "hstryYn",       fieldName: "hstryYn",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "변동이력여부",                },   },   //변동이력여부(0: 현행 주소정보, 1: 요청변수의 keyword(검색어)가 변동된 주소정보에서 검색된 정보)
+            {		 name: "relJibun",      fieldName: "relJibun",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "관련지번",                },   },   //관련지번
+            {		 name: "hemdNm",        fieldName: "hemdNm",		type: "data",   width: "90"     , visible: false     ,header: { 		 text:  "관할주민센터",                },   },   //관할주민센터
+        ];
+
+        function createGrid_addrPop(container, workTp) {
+
+            dataProvider_addrPop = new RealGrid.LocalDataProvider();
+            gridView_addrPop = new RealGrid.GridView(container);
+
+            gridView_addrPop.setDataSource(dataProvider_addrPop);
+            dataProvider_addrPop.setFields(fields_addrPop);
+            gridView_addrPop.setColumns(columns_addrPop);
+
+            //체크박스(false), 라디오버튼(true)
+            gridView_addrPop.setCheckBar({  exclusive: true    });
+            //상태바 표시여부
+            gridView_addrPop.setStateBar({  visible: false  });
+
+            gridView_addrPop.displayOptions.emptyMessage = "표시할 데이타가 없습니다.";
+            gridView_addrPop.displayOptions.rowHeight = 36;
+            gridView_addrPop.header.height = 40;
+            gridView_addrPop.footer.height = 40;
+            gridView_addrPop.stateBar.width = 30;
+            gridView_addrPop.editOptions.insertable = true;
+            gridView_addrPop.editOptions.appendable = true;
+            gridView_addrPop.footers.visible = false;//하단 소계 감추기
+
+            //그리드 이벤트
+            gridView_addrPop.onCellClicked = function(grid, clickData) {
+                //console.log(clickData);
+                gridView_addrPop.checkRow(clickData.itemIndex, true, true);
+            }
+
+            gridView_addrPop.setRowStyleCallback(function(grid, item, fixed) {
+                if (item.checked) {
+                    return "light-blue-column";
+                }
+            })
+
+            gridView_addrPop.onCellDblClicked = function(grid, clickData) {
+                //console.log(dataProvider_addrPop.getRows(clickData.itemIndex, clickData.itemIndex)[0][0]);
+                //console.log(dataProvider_addrPop.getRows(clickData.itemIndex, clickData.itemIndex)[0][5]);
+                var address = dataProvider_addrPop.getRows(clickData.itemIndex, clickData.itemIndex)[0][0];
+                var zipCd = dataProvider_addrPop.getRows(clickData.itemIndex, clickData.itemIndex)[0][5];
+                popReturnValue(address, zipCd);
+
+                $("#postPop_keyword").val("");
+                $('#addrCdPopup').val('');
+                $('#addrNmPopup').val('');
+                $("#postSearchPopup2").bPopup().close(); // 닫기
+            }
+        }
+
+        let currPageNo = 1; //현재 페이지 번호
+        let pageSize = 5;   //페이지 표시 사이즈
+        let totalCount = 0; //총 검색 데이터수
+        function postPagination(act) {
+            if (act == "prev") {
+                if (currPageNo < pageSize) {
+                    currPageNo = 1;
+                } else {
+                    if (currPageNo < pageSize) {
+                        currPageNo = 1;
+                    } else if (currPageNo % pageSize == 0) {
+                        currPageNo = currPageNo - (pageSize * 2) + 1;
+                    } else {
+                        currPageNo = (parseInt(currPageNo / pageSize) * pageSize) - (pageSize - 1);
+                    }
+                }
+                $("#currentPage").val(currPageNo);
+            } else if (act == "next") {
+                currPageNo = (parseInt(currPageNo / pageSize) * pageSize  + 1) + pageSize;
+                $("#currentPage").val(currPageNo);
+
+            } else {
+                currPageNo = isNaN(act) ? 1 : parseInt(act);
+                $("#currentPage").val(act);
+            }
+
+            console.log(currPageNo);
+
+            getAddr();
+
+        }
+
+        function getAddr(){
+            // 적용예 (api 호출 전에 검색어 체크)
+            if (!checkSearchedWord(document.form.keyword)) {
+                return ;
+            }
+            //$("#addrApi_list").jsGrid("loadData");
+            //승인키 발급은 https://www.juso.go.kr/addrlink/devAddrLinkRequestWrite.do?returnFn=write&cntcMenu=URL 에서... 도로명주소API/검색API/업체명/URL입력 후 신청하면됨.
+            //U01TX0FVVEgyMDIyMDQxNDE3NDI1MzExMjQ2NjU=
+            $.ajax({
+                url :"https://www.juso.go.kr/addrlink/addrLinkApiJsonp.do"  //인터넷망
+                ,type:"post"
+                ,data:$("#form2").serialize()
+                ,dataType:"jsonp"
+                ,crossDomain:true
+                ,success:function(jsonStr){
+                    console.log(jsonStr);
+                    var errCode = jsonStr.results.common.errorCode;
+                    var errDesc = jsonStr.results.common.errorMessage;
+                    if(errCode != "0"){
+                        alert(errCode+"="+errDesc);
+                    }else{
+                        if(jsonStr != null){
+                            console.log(jsonStr);
+                            dataProvider_addrPop.setRows(jsonStr.results.juso);
+                            //dataProvider_addrPop.fillJsonData(JSON.parse(jsonStr.results.juso), {fillMode : "set"});
+                            gridView_addrPop.refresh();
+
+                            //페이징처리
+                            totalCount = isNaN(jsonStr.results.common.totalCount) ? 0 : parseInt(jsonStr.results.common.totalCount);
+                            /*
+                            <li class="page-item" id="page-prev"><a class="page-link" href="javascript:postPagination('prev')">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="javascript:postPagination('')">1</a></li>
+                            <li class="page-item" id="page-next"><a class="page-link" href="javascript:postPagination('next')">Next</a></li>
+                            */
+                            $(".pagination").empty();
+                            let pageUl = document.querySelector(".pagination");
+                            if (currPageNo > pageSize) {
+                                let prevLi = document.createElement("li");
+                                prevLi.setAttribute("class", "page-item");
+                                prevLi.setAttribute("id", "page-prev");
+                                let prefA = document.createElement("a");
+                                prefA.setAttribute("class", "page-link");
+                                prefA.setAttribute("href", "javascript:postPagination('prev')");
+                                prefA.appendChild(document.createTextNode("Previous"));
+                                prevLi.appendChild(prefA);
+                                pageUl.appendChild(prevLi);
+                            }
+
+                            //console.log("curr : " + (parseInt(totalCount / parseInt($("#countPerPage").val())) + 1))
+                            for (let i = 0; i < parseInt(totalCount / parseInt($("#countPerPage").val())) + 1 && i < pageSize; i++) {
+                                let pageLi = document.createElement("li");
+                                pageLi.setAttribute("class", "page-item");
+                                let pageA = document.createElement("a");
+                                pageA.setAttribute("class", "page-link");
+                                pageA.setAttribute("href", "javascript:postPagination(" + (currPageNo + i) + ")");
+                                pageA.appendChild(document.createTextNode(currPageNo + i));
+                                pageLi.appendChild(pageA);
+                                pageUl.appendChild(pageLi);
+                            }
+
+                            //console.log("next : " + parseInt(totalCount / parseInt($("#countPerPage").val()) / pageSize) + " / " + currPageNo);
+                            if (parseInt(totalCount / parseInt($("#countPerPage").val()) / pageSize) > currPageNo) {
+                                let nextLi = document.createElement("li");
+                                nextLi.setAttribute("class", "page-item");
+                                nextLi.setAttribute("id", "page-prev");
+                                let nextA = document.createElement("a");
+                                nextA.setAttribute("class", "page-link");
+                                nextA.setAttribute("href", "javascript:postPagination('next')");
+                                nextA.appendChild(document.createTextNode("Next"));
+                                nextLi.appendChild(nextA);
+                                pageUl.appendChild(nextLi);
+                            }
+
+                        }
+                    }
+                }
+                ,error: function(xhr,status, error){
+                    alert("에러발생");
+                }
+            });
+        }
+
+        //특수문자, 특정문자열(sql예약어의 앞뒤공백포함) 제거
+        function checkSearchedWord(obj){
+            if(obj.value.length >0){
+                //특수문자 제거
+                var expText = /[%=><]/ ;
+                if(expText.test(obj.value) == true){
+                    alert("특수문자를 입력 할수 없습니다.") ;
+                    obj.value = obj.value.split(expText).join("");
+                    return false;
+                }
+
+                //특정문자열(sql예약어의 앞뒤공백포함) 제거
+                var sqlArray = new Array(
+                    //sql 예약어
+                    "OR", "SELECT", "INSERT", "DELETE", "UPDATE", "CREATE", "DROP", "EXEC",
+                    "UNION",  "FETCH", "DECLARE", "TRUNCATE"
+                );
+
+                var regex;
+                for(var i=0; i<sqlArray.length; i++){
+                    regex = new RegExp( sqlArray[i] ,"gi") ;
+
+                    if (regex.test(obj.value) ) {
+                        alert("\"" + sqlArray[i]+"\"와(과) 같은 특정문자로 검색할 수 없습니다.");
+                        obj.value =obj.value.replace(regex, "");
+                        return false;
+                    }
+                }
+            }
+            return true ;
+        }
+
+        function enterSearch() {
+            console.log("enterSearch()");
+            var evt_code = (window.netscape) ? ev.which : event.keyCode;
+            if (evt_code == 13) {
+                console.log("enter...");
+                event.keyCode = 0;
+                event.preventDefault();
+                getAddr();
+            }
+        }
+
+        function loadData_addrPop() {
+
+            if (httpRequest_addrPop.readyState == XMLHttpRequest.DONE) {
+
+                if (httpRequest_addrPop.status == 200
+                    || httpRequest_addrPop.status == 201) {
+                    //alert(httpRequest_addrPop.status);
+                    console.log(httpRequest_addrPop.responseText);
+                    data2 = httpRequest_addrPop.responseText.replace("(", "").replace(")", "");
+                    data2 = data2.replace("'", "").replace("'", "");
+                    console.log(data2);
+                    data2 = JSON.parse(data2);
+                    console.log(data2);
+                    try{
+                        dataProvider_addrPop.fillJsonData(data2, {
+                            fillMode : "set"
+                        });
+                    }catch{
+
+                    }
+                    gridView_addrPop.refresh();
+
+
+                }
+            }
+        }
+
+
+
+
+        var parentGrid = "";
+        function start_addrPop(id, name, grid) {
+            /*
+            if(gridView_addrPop != null){
+                addrPopDestrory();
+            }*/
+
+            //그리드 팝업이 아닐때
+            if (grid != "noticeGrid") {
+                $('#addrCdPopup').val(id);
+                $('#addrNmPopup').val(name);
+            }
+
+            parentGrid = grid;
+
+            createGrid_addrPop("addrApi_list2");
+        }
+        function start_addrPopByWorkTp(id, name, workTp) {
+            if(gridView_addrPop != null){
+                addrPopDestrory();
+            }
+
+            $('#addrCdPopup').val(id);
+            $('#addrNmPopup').val(name);
+
+            console.log(workTp);
+            createGrid_addrPop("addrApi_list2", workTp);
+        }
+
+        // domloaded를 대신 써도 됩니다.
+
+        window.onunload = function() {
+
+            dataProvider_addrPop.clearRows();
+
+            gridView_addrPop.destroy();
+            dataProvider_addrPop.destroy();
+
+            gridView_addrPop = null;
+            dataProvider_addrPop = null;
+        }
+
+        //팝업 닫기
+        $(document).on('click', '#invClose', function() {
+
+            //검색조건 초기화
+            $('#addrCdPopup').val('');
+            $('#addrNmPopup').val('');
+
+            $("#userPopup").bPopup().close(); // 닫기
+        });
+
+        //주소검색 그리드 해제
+        function addrPopDestrory() {
+            dataProvider_addrPop.clearRows();
+
+            gridView_addrPop.destroy();
+            dataProvider_addrPop.destroy();
+
+            gridView_addrPop = null;
+            dataProvider_addrPop = null;
+        }
+
+        function setAddress() {
+            var checkedAddr = gridView_addrPop.getCheckedItems();
+            if (checkedAddr.length == 0) {
+                toastrWarning("선택된 주소가 없습니다.");
+                return;
+            }
+            var checkedRow = dataProvider_addrPop.getJsonRow(checkedAddr[0]);
+            popReturnValue(checkedRow.roadAddr, checkedRow.zipNo);
+
+            $("#postPop_keyword").val("");
+            $('#addrCdPopup').val('');
+            $('#addrNmPopup').val('');
+
+            //페이징 초기화
+            currPageNo = 1; //현재 페이지 번호
+            totalCount = 0; //총 검색 데이터수
+            $(".pagination").empty();
+
+            $("#postSearchPopup2").bPopup().close(); // 닫기
+
+        }
+
+
+    </script>
+
+
+
+    <div id="postSearchPopup2" class="container-fluid w-50 h-75">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <form name="form" id="form2" method="post">
+                            <input type="hidden" id="currentPage" name="currentPage" value="1"/> <!-- 요청 변수 설정 (현재 페이지. currentPage : n > 0) -->
+                            <input type="hidden" id="countPerPage" name="countPerPage" value="100"/><!-- 요청 변수 설정 (페이지당 출력 개수. countPerPage 범위 : 0 < n <= 100) -->
+                            <input type="hidden" id="resultType" name="resultType" value="json"/> <!-- 요청 변수 설정 (검색결과형식 설정, json) -->
+                            <input type="hidden" id="confmKey" name="confmKey" value="U01TX0FVVEgyMDIyMDQxNDE3NDI1MzExMjQ2NjU="/><!-- 요청 변수 설정 (승인키) -->
+                            <!--<input type="hidden" id="confmKey" name="confmKey" value="TESTJUSOGOKR"/>--><!-- 요청 변수 설정 (승인키) -->
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="postPop_keyword" name="keyword" value="" onkeydown="enterSearch();"/><!-- 요청 변수 설정 (키워드) -->
+                                <span class="input-group-text btn btn-secondary btn-right icon-search" onclick="getAddr()">주소검색하기</span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div id="addrApi_list2" style="width:100%; height:400px;"></div><!-- 검색 결과 리스트 출력 영역 -->
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-9">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination pagination-primary">
+                                        <!--
+                                        <li class="page-item" id="page-prev"><a class="page-link" href="javascript:postPagination('prev')">Previous</a></li>
+                                        <li class="page-item"><a class="page-link" href="javascript:postPagination('')">1</a></li>
+                                        <li class="page-item" id="page-next"><a class="page-link" href="javascript:postPagination('next')">Next</a></li>
+                                        -->
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="col-3">
+                                <div class="text-end">
+                                    <a class="btn btn-secondary" href="#" th:href="|javascript:setAddress()|">선택</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+<!-- 주소검색Api 끝 -->
+
+<!-- 품목검색 시작 -->
+<th:block th:fragment="schProductPopup">
+    <script type="text/javascript">
+        // 품목검색
+        var dataProvider_productPop, gridContainer_productPop, gridView_productPop;
+        var httpRequest_productPop;
+        var param;
+        var current_productPop,value_productPop;
+
+        var fields_productPop = [
+            {   fieldName: "proCd",		    dataType: "text",     },
+            {	fieldName: "proGrp1",       dataType: "text",     },
+            {	fieldName: "proGrp1Nm",     dataType: "text",     },
+            {	fieldName: "proGrp2",	    dataType: "text",     },
+            {	fieldName: "proGrp2Nm",	    dataType: "text",     },
+            {	fieldName: "proNm",		    dataType: "text",     },
+            {	fieldName: "proMaker",	    dataType: "text",     },
+            {	fieldName: "proSpec",	    dataType: "text",     },
+            {	fieldName: "proUnit",	    dataType: "text",     },
+            {	fieldName: "proUnitNm",	    dataType: "text",     },
+        ];
+
+        var columns_productPop = [
+            {   name: "proCd",      fieldName: "proCd", 		type: "data", 		 width: "90", 		 header: {  text:  "품목코드",     },  visible: false,     },
+            {	name: "proGrp1", 	fieldName: "proGrp1", 		type: "data", 		 width: "90", 		 header: { 	text:  "대분류",       },  visible: false,     },
+            {	name: "proGrp1Nm", 	fieldName: "proGrp1Nm", 	type: "data", 		 width: "150", 		 header: { 	text:  "대분류",       },     },
+            {	name: "proGrp2", 	fieldName: "proGrp2", 		type: "data", 		 width: "150", 		 header: { 	text:  "중분류",       },  visible: false,     },
+            {	name: "proGrp2Nm", 	fieldName: "proGrp2Nm", 	type: "data", 		 width: "150", 		 header: { 	text:  "중분류",       },     },
+            {	name: "proNm", 		fieldName: "proNm", 		type: "data", 		 width: "250", 		 header: { 	text:  "품목명",       },  styleName: "left-column",     },
+            {	name: "proMaker", 	fieldName: "proMaker", 		type: "data", 		 width: "150", 		 header: { 	text:  "제조사",       },  styleName: "left-column",   },
+            {	name: "proSpec", 	fieldName: "proSpec", 		type: "data", 		 width: "350", 		 header: { 	text:  "상세스펙",      },  styleName: "left-column",   },
+            {	name: "proUnit", 	fieldName: "proUnit", 		type: "data", 		 width: "90", 		 header: { 	text:  "구매단위",      },  },
+            {	name: "proUnitNm", 	fieldName: "proUnitNm", 	type: "data", 		 width: "90", 		 header: { 	text:  "구매단위",      },  visible: false,   },
+        ];
+
+        var parentGrid = "";
+        function start_productPop() {
+
+            $('#popProGrp1').children('option').remove();
+            $('#popProGrp1') .append($("<option></option>") .attr("value", $("#rfqProGrp1 option:selected").val()) .text($("#rfqProGrp1 option:selected").text()));
+
+
+            $("#popProGrp1").val($("#rfqProGrp1 option:selected").val());
+            popChgProGrp1();
+
+            if(gridView_productPop != null){
+                productPopDestrory();
+            }
+
+            //parentGrid = grid;
+
+            createGrid_productPop("prodPopupGrid");
+        }
+
+        function createGrid_productPop(container2, workTp) {
+
+            dataProvider_productPop = new RealGrid.LocalDataProvider();
+            gridView_productPop = new RealGrid.GridView(container2);
+
+            gridView_productPop.setDataSource(dataProvider_productPop);
+            dataProvider_productPop.setFields(fields_productPop);
+            gridView_productPop.setColumns(columns_productPop);
+
+            gridView_productPop.displayOptions.showEmptyMessage = true;
+            gridView_productPop.displayOptions.emptyMessage = "표시할 데이타가 없습니다.";
+            gridView_productPop.displayOptions.producttyMessage = "표시할 데이타가 없습니다.";
+            gridView_productPop.displayOptions.rowHeight = 36;
+            gridView_productPop.header.height = 40;
+            gridView_productPop.footer.height = 40;
+            gridView_productPop.stateBar.width = 30;
+            gridView_productPop.editOptions.insertable = false;
+            gridView_productPop.editOptions.editable = false;
+            gridView_productPop.editOptions.appendable = false;
+            gridView_productPop.footers.visible = false;//하단 소계 감추기
+
+            //더블클릭 시
+            gridView_productPop.onCellDblClicked = function(grid, clickData) {
+                popReturnValue(dataProvider_productPop.getJsonRows(clickData.itemIndex, clickData.itemIndex));
+
+                //$('#popProGrp1').val('');
+                //$('#popProGrp2').val('');
+                // $("#schProductPopup").bPopup().close(); // 닫기
+            }
+
+            //get으로 넘길 함수
+            // menu = "/commempPopup.do?empCdPopup="+$('#empCdPopup').val()+"&empNmPopup="+$('#empNmPopup').val();
+
+        }
+
+        // domloaded를 대신 써도 됩니다.
+        window.onunload = function() {
+
+            dataProvider_productPop.clearRows();
+
+            gridView_productPop.destroy();
+            dataProvider_productPop.destroy();
+
+            gridView_productPop = null;
+            dataProvider_productPop = null;
+        }
+
+        //품목검색 그리드 해제
+        function productPopDestrory() {
+            dataProvider_productPop.clearRows();
+
+            gridView_productPop.destroy();
+            dataProvider_productPop.destroy();
+
+            gridView_productPop = null;
+            dataProvider_productPop = null;
+        }
+
+        function schProduct() {
+
+        }
+
+        function popChgProGrp1() {
+            if($("#popProGrp1").val() == "") return;
+
+            var params = {};
+            params.legCd = "STW";
+            params.grpCd = "ITEM_LV2";
+            params.info1 = $("#popProGrp1").val();
+
+            ajaxJsonCall("/p1611/selectCmmLegCodeProLv2", params, function (data) {
+                console.log(data);
+                if (data.fields.RESULT_CD == "S") {
+
+                    $('#popProGrp2').children('option:not(:first)').remove();
+
+                    //$("#proGrp1").append('<option value="option6">option6</option>');
+                    if (data.fields.proLv2List.length == 0) {
+                        toastrWarning("조회된 품목 중분류가 없습니다.");
+                        return;
+                    }
+                    $.each(data.fields.proLv2List, function(idx, proLv2) {
+                        $('#popProGrp2') .append($("<option></option>") .attr("value",proLv2.code) .text(proLv2.codeNm));
+                    });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function searchProduct() {
+            var params = {};
+            params.proGrp1 = $("#popProGrp1").val();
+            params.proGrp2 = $("#popProGrp2").val();
+
+            ajaxJsonCall("/p1611/p161101_01SearchPopup", params, function (data) {
+                console.log(data);
+                if (data.fields.RESULT_CD == "S") {
+                    if (data.fields.productList.length == 0) {
+                        toastrWarning("해당 대/중분류에 등록된 품목이 없습니다.");
+                    }
+                    dataProvider_productPop.fillJsonData(data.fields.productList, { fillMode: "set" });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        //TODO 품목 검색 팝업에서 선택 버튼 눌렀을때... 기능 구현해야함.
+        function selProduct() {
+
+            console.log(gridView_productPop.getCheckedRows());
+            console.log(gridView_productPop.getCheckedItems());
+            let checkedRows = gridView_productPop.getCheckedRows();
+            let rowDatas = [];
+            if (checkedRows.length == 0) {
+                toastrWarning("선택된 품목이 없습니다.");
+                return;
+            }
+
+            for (let i in checkedRows) {
+                rowDatas.push(dataProvider_productPop.getJsonRow(checkedRows[i]));
+            }
+            popReturnValue(rowDatas);
+
+            $('#popProGrp1').val('');
+            $('#popProGrp2').val('');
+
+            //모달창 수동으로 닫기
+            $("#schProductPopup").modal('hide');
+
+        }
+
+    </script>
+
+
+    <div class="modal fade" id="schProductPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schProduct">품목 조회</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="mb-3">
+                                    <label>품목 대분류</label>
+                                    <select class="form-select" id="popProGrp1" th:onchange="popChgProGrp1()">
+                                        <option value="">품목 대분류를 선택하세요.</option>
+                                        <option th:if="${#lists.isEmpty(proLv1List) == false}"
+                                                th:each="proLv1 : ${proLv1List}"
+                                                th:text="${proLv1.codeNm}"
+                                                th:value="${proLv1.code}">대분류1
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="mb-3">
+                                    <label>품목 중분류</label>
+                                    <select class="form-select" id="popProGrp2">
+                                        <option value="">품목 중분류를 선택하세요.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="mb-3 text-end text-bottom">
+                                    <label>&nbsp;</label>
+                                    <!--<input class="form-control" type="text" id="popProNm" placeholder="제조사">-->
+                                    <button type="button" class="form-control btn btn-primary text-white" onclick="searchProduct()">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3" id="prodPopupGrid" style="width:100%; height:400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">닫기</button>
+                    <button class="btn btn-primary" type="button" onclick="selProduct()">선택</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+<!-- 품목검색 끝 -->
+
+<!-- 품목등록 시작 -->
+<th:block th:fragment="addProductPopup">
+    <div class="modal fade" id="addProductPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductTitle">품목 등록</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label>품목 대분류</label>
+                                    <select class="form-select" id="popProGrp1" th:onchange="popChgProGrp1()">
+                                        <option value="">품목 대분류를 선택하세요.</option>
+                                        <option th:if="${#lists.isEmpty(proLv1List) == false}"
+                                                th:each="proLv1 : ${proLv1List}"
+                                                th:text="${proLv1.codeNm}"
+                                                th:value="${proLv1.code}">대분류1
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label>품목 중분류</label>
+                                    <select class="form-select" id="popProGrp2">
+                                        <option value="">품목 중분류를 선택하세요.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label>구매 단위</label>
+                                    <select class="form-select" id="popProUnit">
+                                        <option value="">구매 단위를 선택하세요.</option>
+                                        <option th:if="${#lists.isEmpty(proUnitList) == false}"
+                                                th:each="proUnit : ${proUnitList}"
+                                                th:text="${proUnit.codeNm}"
+                                                th:value="${proUnit.code}">구매단위
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="mb-4">
+                                    <label>제조사</label>
+                                    <input class="form-control" type="text" id="popProMaker" placeholder="제조사">
+                                </div>
+                            </div>
+                            <!--
+                            <div class="col-sm-2">
+                                <div class="mb-4">
+                                    <label>품목 코드</label>
+                                    <input class="form-control" type="text" id="popProCd" placeholder="제품코드">
+                                </div>
+                            </div>
+                            -->
+                            <div class="col-sm-7">
+                                <div class="mb-8">
+                                    <label>품목명</label>
+                                    <input class="form-control" type="text" id="popProNm" placeholder="제품명">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="mb-8">
+                                    <label>사용여부</label>
+                                    <select class="form-select" id="popUseYn">
+                                        <option value="Y">Y</option>
+                                        <option value="N">N</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label>상세스펙</label>
+                                    <textarea class="form-control" id="popProSpec" rows="25"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="button" onclick="addProductProc()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //모달이 열릴 때 바로 실행되는 이벤트
+        $('#addProductPopup').on('show.bs.modal', function (e) {
+            console.log("show.bs.modal");
+        });
+
+        //모달의 열림이 끝나고 실행되는 이벤트
+        $('#addProductPopup').on('shown.bs.modal', function (e) {
+            console.log("shown.bs.modal");
+        });
+
+        //모달이 닫힐 때 바로 실행되는 이벤트
+        $('#addProductPopup').on('hide.bs.modal', function (e) {
+            console.log("hide.bs.modal");
+        });
+
+        //모달의 닫힘이 끝나고 실행되는 이벤트
+        $('#addProductPopup').on('hidden.bs.modal', function (e) {
+            console.log("hidden.bs.modal");
+            location.reload();
+        });
+
+        //품목 대분류 선택시 중분류 조회
+        function popChgProGrp1() {
+            if($("#popProGrp1").val() == "") return;
+
+            var params = {};
+            params.legCd = "STW";
+            params.grpCd = "ITEM_LV2";
+            params.info1 = $("#popProGrp1").val();
+
+            ajaxJsonCall("/p1611/selectCmmLegCodeProLv2", params, function (data) {
+                console.log(data);
+                if (data.fields.RESULT_CD == "S") {
+
+                    $('#popProGrp2').children('option:not(:first)').remove();
+
+                    //$("#proGrp1").append('<option value="option6">option6</option>');
+                    if (data.fields.proLv2List.length == 0) {
+                        toastrWarning("조회된 품목 중분류가 없습니다.");
+                        return;
+                    }
+                    $.each(data.fields.proLv2List, function(idx, proLv2) {
+                        $('#popProGrp2') .append($("<option></option>") .attr("value",proLv2.code) .text(proLv2.codeNm));
+                    });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function addProduct(proGrp1) {
+            console.log("addProduct()");
+            $("#popProGrp1").val(proGrp1);
+            popChgProGrp1();
+        }
+
+        function addProductProc() {
+            console.log("addProductProc()");
+
+            if ($("#popProGrp1").val() == "") {
+                toastrError("품목 대분류를 선택하세요.");
+                $("#popProGrp1").focus();
+                return;
+            }
+            if ($("#popProGrp2").val() == "") {
+                toastrError("품목 중분류를 선택하세요.");
+                $("#popProGrp2").focus();
+                //return;
+            }
+            // if ($("#popProCd").val() == "") {
+            //     toastrError("품목 코드를 입력하세요.");
+            //     $("#popProCd").focus();
+            //     return;
+            // }
+
+            if ($("#popProNm").val() == "") {
+                toastrError("품목명을 입력하세요.");
+                $("#popProNm").focus();
+                return;
+            }
+
+            if ($("#popProSpec").val() == "") {
+                toastrError("품목 상세스펙을 입력하세요.");
+                $("#popProSpec").focus();
+                return;
+            }
+
+            if ($("#popProUnit").val() == "") {
+                toastrError("품목 구매단위를 선택하세요.");
+                $("#popProUnit").focus();
+                return;
+            }
+
+            var params = {};
+            params.proGrp1  = $("#popProGrp1").val();
+            params.proGrp2  = $("#popProGrp2").val();
+            params.proCd    = $("#popProCd").val();
+            params.proNm    = $("#popProNm").val();
+            params.proSpec  = $("#popProSpec").val();
+            params.proUnit  = $("#popProUnit").val();
+            params.useYn    = $("#popUseYn").val();
+            console.log(params);
+
+            ajaxJsonCall("/p1611/p161101_03Proc", params, function (obj) {
+                if (obj.fields.RESULT_CD == "S") {
+                    toastrSuccess('정상적으로 처리되었습니다.');
+                    $("#popProGrp1").val("");
+                    $("#popProGrp2").val("");
+                    $("#popProCd").val("");
+                    $("#popProNm").val("");
+                    $("#popProSpec").val("");
+                    $("#popProUnit").val("");
+                } else {
+                    toastrError();
+                }
+            });
+        }
+    </script>
+</th:block>
+<!-- 품목등록 끝 -->
+
+<!-- 품목상세 시작 -->
+<th:block th:fragment="detlProductPopup">
+    <div class="modal fade" id="detlProductPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detlProductTitle">품목 상세</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label>품목 대분류</label>
+                                    <select class="form-select" id="detlProGrp1" th:onchange="detlPopChgProGrp1()">
+                                        <option value="">품목 대분류를 선택하세요.</option>
+                                        <option th:if="${#lists.isEmpty(proLv1List) == false}"
+                                                th:each="proLv1 : ${proLv1List}"
+                                                th:text="${proLv1.codeNm}"
+                                                th:value="${proLv1.code}">대분류1
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label>품목 중분류</label>
+                                    <select class="form-select" id="detlProGrp2">
+                                        <option value="">품목 중분류를 선택하세요.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mb-3">
+                                    <label>구매 단위</label>
+                                    <select class="form-select" id="detlProUnit">
+                                        <option value="">구매 단위를 선택하세요.</option>
+                                        <option th:if="${#lists.isEmpty(proUnitList) == false}"
+                                                th:each="proUnit : ${proUnitList}"
+                                                th:text="${proUnit.codeNm}"
+                                                th:value="${proUnit.code}">구매단위
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="mb-4">
+                                    <label>제조사</label>
+                                    <input class="form-control" type="text" id="detlProMaker" placeholder="제조사">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="mb-4">
+                                    <label>품목 코드</label>
+                                    <input class="form-control" type="text" id="detlProCd" placeholder="제품코드">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="mb-8">
+                                    <label>품목명</label>
+                                    <input class="form-control" type="text" id="detlProNm" placeholder="제품명">
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="mb-8">
+                                    <label>사용여부</label>
+                                    <select class="form-select" id="detlUseYn">
+                                        <option value="Y">Y</option>
+                                        <option value="N">N</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label>상세스펙</label>
+                                    <textarea class="form-control" id="detlProSpec" rows="25"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="button" onclick="updateProduct()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hidProCd" name="hidProCd">
+    <script>
+        //모달이 열릴 때 바로 실행되는 이벤트
+        $('#detlProductPopup').on('show.bs.modal', function (e) {
+            console.log("show.bs.modal");
+        });
+
+        //모달의 열림이 끝나고 실행되는 이벤트
+        $('#detlProductPopup').on('shown.bs.modal', function (e) {
+            console.log("shown.bs.modal - " + $("#hidProCd").val());
+
+            var params = {};
+            params.proCd = $("#hidProCd").val();
+
+            ajaxJsonCall("/p1611/p161101_01Detail", params, function (data) {
+                console.log(data);
+                if (data.fields.RESULT_CD == "S") {
+                    var product = data.fields.product;
+                    if (product == null) {
+                        toastrInfo("품목 정보가 없습니다.");
+                        return;
+                    }
+                    var params2 = {};
+                    params2.legCd = "STW";
+                    params2.grpCd = "ITEM_LV2";
+                    params2.info1 = product.proGrp1;
+                    $("#detlProGrp1").val(product.proGrp1);
+
+                    $.ajax({
+                        type : 'POST',
+                        url : '/p1611/selectCmmLegCodeProLv2',
+                        contentType : 'application/json;charset=UTF-8',
+                        data : JSON.stringify(params2),
+                        dataType : 'json',
+                        cache: false,
+                        async:false,
+                        success : function(data) {
+                            $('#detlProGrp2').children('option:not(:first)').remove();
+
+                            //$("#proGrp1").append('<option value="option6">option6</option>');
+                            if (data.fields.proLv2List.length == 0) {
+                                toastrWarning("조회된 품목 중분류가 없습니다.");
+                                return;
+                            }
+                            $.each(data.fields.proLv2List, function(idx, proLv2) {
+                                $('#detlProGrp2') .append($("<option></option>") .attr("value",proLv2.code) .text(proLv2.codeNm));
+                            });
+                        },
+                        error : function(xhr, status, error) {
+                            if (401 === xhr.status) {
+                                alert('<spring:message code="M1000015" javaScriptEscape="true"/>');
+                                location.href = "/";
+                            } else {
+                                alert(error);
+                            }
+                            try{ $('.pageLoader').remove(); } catch(e){}
+                        }
+                    });
+
+                    $("#detlProGrp2").val(product.proGrp2);
+                    $("#detlProUnit").val(product.proUnit);
+                    $("#detlProMaker").val(product.proMaker);
+                    $("#detlProCd").val(product.proCd);
+                    $("#detlProNm").val(product.proNm);
+                    $("#detlProSpec").val(product.proSpec);
+                    $("#detlUseYn").val(product.useYn);
+
+
+                } else {
+                    console.log(data.errMsg);
+                    toastrError(data.errMsg);
+                }
+            });
+        });
+
+        //모달이 닫힐 때 바로 실행되는 이벤트
+        $('#detlProductPopup').on('hide.bs.modal', function (e) {
+            console.log("hide.bs.modal");
+        });
+
+        //모달의 닫힘이 끝나고 실행되는 이벤트
+        $('#detlProductPopup').on('hidden.bs.modal', function (e) {
+            console.log("hidden.bs.modal");
+            //location.reload();
+        });
+
+        //품목 대분류 선택시 중분류 조회
+        function detlPopChgProGrp1() {
+            if($("#detlProGrp1").val() == "") return;
+
+            var params = {};
+            params.legCd = "STW";
+            params.grpCd = "ITEM_LV2";
+            params.info1 = $("#detlProGrp1").val();
+
+            ajaxJsonCall("/p1611/selectCmmLegCodeProLv2", params, function (data) {
+                console.log(data);
+                if (data.fields.RESULT_CD == "S") {
+
+                    $('#detlProGrp2').children('option:not(:first)').remove();
+
+                    //$("#proGrp1").append('<option value="option6">option6</option>');
+                    if (data.fields.proLv2List.length == 0) {
+                        toastrWarning("조회된 품목 중분류가 없습니다.");
+                        return;
+                    }
+                    $.each(data.fields.proLv2List, function(idx, proLv2) {
+                        $('#detlProGrp2') .append($("<option></option>") .attr("value",proLv2.code) .text(proLv2.codeNm));
+                    });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+        function updateProduct() {
+            console.log("updateProduct()");
+
+            if ($("#detlProGrp1").val() == "") {
+                toastrError("품목 대분류를 선택하세요.");
+                $("#detlProGrp1").focus();
+                return;
+            }
+            if ($("#detlProGrp2").val() == "") {
+                toastrError("품목 중분류를 선택하세요.");
+                $("#detlProGrp2").focus();
+                //return;
+            }
+            if ($("#detlProCd").val() == "") {
+                toastrError("품목 코드를 입력하세요.");
+                $("#detlProCd").focus();
+                return;
+            }
+
+            if ($("#detlProNm").val() == "") {
+                toastrError("품목명을 입력하세요.");
+                $("#detlProNm").focus();
+                return;
+            }
+
+            if ($("#detlProSpec").val() == "") {
+                toastrError("품목 상세스펙을 입력하세요.");
+                $("#detlProSpec").focus();
+                return;
+            }
+
+            if ($("#detlProUnit").val() == "") {
+                toastrError("품목 구매단위를 선택하세요.");
+                $("#detlProUnit").focus();
+                return;
+            }
+            if ($("#detlProMaker").val() == "") {
+                toastrError("제조사를 입력하세요.");
+                $("#detlProMaker").focus();
+                return;
+            }
+
+            var params = {};
+            params.proGrp1   = $("#detlProGrp1").val();
+            params.proGrp2   = $("#detlProGrp2").val();
+            params.proCd     = $("#detlProCd").val();
+            params.proNm     = $("#detlProNm").val();
+            params.proMaker = $("#detlProMaker").val();
+            params.proSpec   = $("#detlProSpec").val();
+            params.proUnit   = $("#detlProUnit").val();
+            params.useYn     = $("#detlUseYn").val();
+            console.log(params);
+
+            ajaxJsonCall("/p1611/p161101_04Proc", params, function (obj) {
+                if (obj.fields.RESULT_CD == "S") {
+                    toastrSuccess('정상적으로 처리되었습니다.');
+                    location.reload();
+                    // $("#detlProGrp1").val("");
+                    // $("#detlProGrp2").val("");
+                    // $("#detlProCd").val("");
+                    // $("#detlProNm").val("");
+                    // $("#detlProSpec").val("");
+                    // $("#detlProUnit").val("");
+                } else {
+                    toastrError();
+                }
+            });
+        }
+
+        function detailProduct(proCd) {
+            console.log("detailProduct() - " + proCd);
+            $("#hidProCd").val(proCd);
+        }
+
+    </script>
+</th:block>
+<!-- 품목상세 끝 -->
+
+<!-- 대체품목스펙 팝업 시작 -->
+<th:block th:fragment="fileUploadPopup">
+    <div class="modal fade" id="fileUploadPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileUpload">파일업로드</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive mb-3">
+                                    <table class="table table-hover" id="tblFileList">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="col-1">#</th>
+                                            <th scope="col" class="col-8">파일명</th>
+                                            <th scope="col" class="col-2">파일사이즈</th>
+                                            <th scope="col" class="col-1">관리</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>가나다라마.pdf</td>
+                                            <td>100kb</td>
+                                            <td><button type="button" class="btn btn-xs btn-outline-danger p-1">삭제</button></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>abcdefg.pdf</td>
+                                            <td>100kb</td>
+                                            <td><button type="button" class="btn btn-xs btn-outline-danger p-1">삭제</button></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>1234567.pdf</td>
+                                            <td>100kb</td>
+                                            <td><button type="button" class="btn btn-xs btn-outline-danger p-1">삭제</button></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--<form class="dropzone p-t-10 p-b-10 m-t-10" id="singleFileUpload" action="/cmmfile/singleFileUpload">
+                                    <label></label>
+                                    <div class="dz-message needsclick"><i class="icon-cloud-up"></i>
+                                        <h6>여기에 파일을 끌어다 놓거나, 이곳을 클릭하여 파일을 선택하세요.</h6>
+                                    </div>
+                                </form>-->
+                                <form class="dropzone p-t-10 p-b-10" style="min-height: 105px;" id="multi-file-upload" enctype="multipart/form-data" action="/cmmfile/singleFileUpload" method="post">
+                                    <div class="dz-message needsclick m-0"><i class="icon-cloud-up"></i>
+                                        <h6>Drop files here or click to upload.</h6><span class="note needsclick"></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="row dz-file-list">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">닫기</button>
+                    <button class="btn btn-secondary" type="button" onclick="saveAttachFile()">저장</button>
+                    <!--<button class="btn btn-primary" type="button">선택</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function saveAttachFile() {
+
+            DropzoneFileUploadProc($("#hdParentId").val(), $("#hdMenuId").val(), $("#hdInfo1").val(), $("#hdInfo2").val(), $("#hdInfo3").val(), $("#hdInfo4").val(), $("#hdInfo5").val());
+
+        }
+    </script>
+</th:block>
+<!-- 대체품목스펙 팝업 끝 -->
+</html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.utils.file.mapper.EccFileMapper">
+
+    <insert id="insertFileInfo" parameterType="eccFile">
+        <selectKey keyProperty="fileSeq" resultType="long" order="BEFORE">
+            SELECT LEGSM.ECC_FILE_SEQ.nextval from dual
+        </selectKey>
+
+        /* opencouncil.HsqFileDAO.insertFileInfo */
+        INSERT INTO ECC_FILE(
+            FILE_SEQ
+            , MENU_ID
+            , PARENT_ID
+            , ORI_FILE_NM
+            , SVR_FILE_NM
+            , FILE_PATH
+            , FILE_TYPE
+            , FILE_SIZE
+            , INFO1
+            , INFO2
+            , INFO3
+            , INFO4
+            , INFO5
+            , INS_USERID
+            , INS_DTTM
+            , UPD_USERID
+            , UPD_DTTM
+        )
+        VALUES(
+            #{fileSeq}
+            , #{menuId}
+            , #{parentId}
+            , #{oriFileNm}
+            , #{svrFileNm}
+            , #{filePath}
+            , #{fileType}
+            , #{fileSize}
+            , #{info1}
+            , #{info2}
+            , #{info3}
+            , #{info4}
+            , #{info5}
+            , #{insUserid}
+            , sysdate
+            , #{updUserid}
+            , sysdate
+        )
+
+    </insert>
+
+    <select id="selectFileInfoByFId" parameterType="String" resultType="eccFile">
+        SELECT FILE_SEQ
+             , MENU_ID
+             , PARENT_ID
+             , ORI_FILE_NM
+             , SVR_FILE_NM
+             , FILE_PATH
+             , FILE_TYPE
+             , FILE_SIZE
+             , INFO1
+             , INFO2
+             , INFO3
+             , INFO4
+             , INFO5
+             , INS_USERID
+             , INS_DTTM
+             , UPD_USERID
+             , UPD_DTTM
+        FROM   ECC_FILE
+        WHERE  FILE_SEQ = #{fileSeq}
+    </select>
+
+    <select id="selectFileListByParentId" parameterType="map" resultType="eccFile">
+        SELECT FILE_SEQ
+             , MENU_ID
+             , PARENT_ID
+             , ORI_FILE_NM
+             , SVR_FILE_NM
+             , FILE_PATH
+             , FILE_TYPE
+             , FILE_SIZE
+             , INFO1
+             , INFO2
+             , INFO3
+             , INFO4
+             , INFO5
+             , INS_USERID
+             , INS_DTTM
+             , UPD_USERID
+             , UPD_DTTM
+        FROM   ECC_FILE
+        WHERE  MENU_ID = #{menuId}
+        AND    PARENT_ID = #{parentId}
+        <if test="info1 != null and info1 != ''">
+            AND INFO1 = #{info1}
+        </if>
+        <if test="info2 != null and info2 != ''">
+            AND INFO2 = #{info2}
+        </if>
+        <if test="info3 != null and info3 != ''">
+            AND INFO3 = #{info3}
+        </if>
+        <if test="info4 != null and info4 != ''">
+            AND INFO4 = #{info4}
+        </if>
+        <if test="info5 != null and info5 != ''">
+            AND INFO5 = #{info5}
+        </if>
+    </select>
+
+    <delete id="deleteFileById" parameterType="map">
+        DELETE FROM ECC_FILE
+        WHERE  FILE_SEQ = #{fileSeq}
+    </delete>
+
+    <delete id="deleteFileByParentId" parameterType="String">
+        DELETE FROM ECC_FILE
+        WHERE  PARENT_ID = #{parentId}
+    </delete>
+
+</mapper>

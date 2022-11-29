@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.ecoc.home.mapper.HomeMapper">
+    <select id="getP1612WorkCount" parameterType="map" resultType="lowerHashMap">
+        SELECT NVL(SUM(CNT1), 0) AS CNT1 --견적진행
+             , NVL(SUM(CNT2), 0) AS CNT2 --제출마감(업체선정)
+             , NVL(SUM(CNT3), 0) AS CNT3 -- PO결재중
+             , NVL(SUM(CNT4), 0) AS CNT4 -- PO결재완료(발주대기)
+        FROM (
+                 SELECT DECODE(RFQ_STATUS, 'C003', 1, 0) AS CNT1
+                      , DECODE(RFQ_STATUS, 'C004', 1, 0) AS CNT2
+                      , 0 AS CNT3
+                      , 0 AS CNT4
+                 FROM STW_RFQ_ELS_REQUEST
+                 WHERE RFQ_STATUS IN ('C003', 'C004')
+                   AND INS_USERID = #{insUserid}
+                 UNION ALL
+                 SELECT 0 AS CNT1
+                      , 0 AS CNT2
+                      , DECODE(PO_STATUS, 'C003', 1, 0) AS CNT3
+                      , DECODE(PO_STATUS, 'C008', 1, 0) AS CNT4
+                 FROM STW_PO_REQUEST
+                 WHERE PO_STATUS IN ('C003', 'C008')
+                   AND INS_USERID = #{insUserid}
+             )
+    </select>
+
+    <select id="getP1613WorkCount" parameterType="map" resultType="lowerHashMap">
+        SELECT NVL(SUM(DECODE(BID_STATUS, 'C001', 1, 0)), ) AS CNT1 --등록
+             , NVL(SUM(DECODE(BID_STATUS, 'C008', 1, 0)), ) AS CNT2 --결재완료
+             , NVL(SUM(DECODE(BID_STATUS, 'C004', 1, 0)), ) AS CNT3 --입찰중
+        FROM STW_BID_REQUEST
+        WHERE BID_STATUS IN ('C001', 'C008', 'C004')
+          AND INS_USERID = #{insUserid}
+    </select>
+
+    <select id="getP1614WorkCount" parameterType="map" resultType="lowerHashMap">
+        SELECT NVL(SUM(DECODE(RFQ_STATUS, 'C002', 1, 0)), 0) AS CNT1 --등록
+             , NVL(SUM(DECODE(RFQ_STATUS, 'C003', 1, 0)), 0) AS CNT2 --견적진행
+             , NVL(SUM(DECODE(RFQ_STATUS, 'C004', 1, 0)), 0) AS CNT3 --제출마감(업체선정)
+        FROM STW_RSD_RFQ_REQUEST
+        WHERE RFQ_STATUS IN ('C002', 'C003', 'C004')
+          AND INS_USERID = #{insUserid}
+    </select>
+</mapper>

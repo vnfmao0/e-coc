@@ -1,0 +1,254 @@
+<!-- 공급업체관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout}">
+
+<th:block layout:fragment="content">
+    <style>
+        video::-internal-media-controls-download-button {display:none;}
+        /*video::-webkit-media-controls { overflow:hidden; }
+        video::-webkit-media-controls-enclosure { width:calc(100% + 32px); margin-left:auto; }*/
+    </style>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>교육 동영상 상세</h5>
+                    <span>현장작업자 실무 교육을 위한 교육영상을 확인합니다.</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            ▶ 교육 기본정보
+                        </div>
+                    </div>
+                    <div class="border p-2" style="background-color: #f5f7fb !important;">
+                        <div class="row m-b-5">
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">제목</label>
+                            <div class="col-sm-9 col-md-5 col-lg-5 col-xl-5">
+                                <input class="form-control bg-white" type="text" id="eduTitle" name="eduTitle" th:value="${educationInfo.eduTitle}" readonly>
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">대분류</label>
+                            <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                <input class="form-control bg-white" type="text" id="eduGrpCd1" name="eduGrpCd1" th:value="${educationInfo.eduGrpCd1Nm}" readonly>
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">중분류</label>
+                            <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                <input class="form-control bg-white" type="text" id="eduGrpCd2" name="eduGrpCd2" th:value="${educationInfo.eduGrpCd2Nm}" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-b-5">
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">교육종류</label>
+                            <div class="col-sm-9 col-md-1 col-lg-1 col-xl-1">
+                                <input class="form-control bg-white" type="text" id="eduType" name="eduType" th:value="${educationInfo.eduTypeNm}" readonly>
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">QR 사용여부</label>
+                            <div class="col-sm-9 col-md-1 col-lg-1 col-xl-1">
+                                <input class="form-control bg-white" type="text" id="qrUse" name="qrUse" th:value="${educationInfo.qrUse}" readonly>
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">QR URL</label>
+                            <div class="col-sm-9 col-md-6 col-lg-6 col-xl-6">
+                                <!--<input class="form-control bg-white" type="text" id="qrUrl" name="qrUrl" th:value="${educationInfo.qrUrl}">-->
+                                <div class="input-group">
+                                    <span class="input-group-text">https://ecc.haesungds.net:9006/checkUserid?qrUrl=</span>
+                                    <input class="form-control bg-white" type="text"id="qrUrl" name="qrUrl" th:value="${educationInfo.qrUrl}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button id="btnQRMake" class="btn btn-secondary" type="button" onclick="makeQRCode()">QR 생성</button>
+                                <!--<a id="btnQRDownload" class="btn btn-secondary" href="/ecoc/downloadQRCodeImage?eduId=${educationInfo.eduId}&eduTitle=${educationInfo.eduTitle}" style="display: none">다운로드</a>-->
+                                <a id="btnQRDownload" class="btn btn-secondary"th:href="@{/ecoc/downloadQRCodeImage(eduId=${educationInfo.eduId}, eduTitle=${educationInfo.eduTitle})}" style="display: none">다운로드</a>
+                            </div>
+                        </div>
+                        <div class="row m-b-5">
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">교육내용</label>
+                            <div class="col-sm-9 col-md-10 col-lg-10 col-xl-10">
+                                <textarea class="form-control bg-white" id="eduContent" name="eduContent" rows="7" th:text="${educationInfo.eduContent}" readonly></textarea>
+                            </div>
+                            <div class="col-1">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <input type="hidden" name="imageData" id="imageData" />
+                                        <div id="qrCodeView"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-8">
+                            ▶ 교육용 동영상
+                        </div>
+                        <div class="col text-end">
+                            <!--<button type="button" class="btn btn-primary" id="btnPlayStop" onclick="playStop()">play</button>-->
+                        </div>
+                    </div>
+                    <div class="border p-2 mb-3" style="background-color: #f5f7fb !important;">
+                        <!--
+                        <div class="row">
+                            <div class="col-12" th:if="${#strings.isEmpty(educationInfo.qrUrl) == false}">
+                                <video style="width: 100vw; height: 100vh; max-height: 500px;" controls th:src="${educationInfo.qrUrl}"></video>
+                            </div>
+                        </div>
+                        -->
+                        <div class="tab-pane" id="video-links" role="tabpanel" aria-labelledby="video-link">
+                            <div class="row">
+                                <div class="col-xl-12 xl-100 box-col-12">
+                                    <!--<div class="row search-vid-block">
+                                        <div class="col-xl-12 xl-50 box-col-12">
+                                            <div class="embed-responsive embed-responsive-21by9 lg-mt">
+                                                <iframe class="w-100" style="max-height: 500px; height: 100vh;" th:src="${educationInfo.qrUrl}" allowfullscreen=""></iframe>
+                                            </div>
+                                        </div>
+                                    </div>-->
+                                    <video class="form-control p-0" id="video" controls controlsList="nodownload" th:src="${educationInfo.qrUrl}"></video>
+                                    <!--<video class="form-control p-0" id="video" th:src="|/onpage${educationInfo.qrUrl}|"></video>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button class="btn btn-secondary" type="button" onclick="goModify()" th:if="${educationInfo.insUserid == session.USER_INFO.userid}">수정</button>
+                            <button class="btn btn-secondary" type="button" onclick="deleteProc()" th:if="${educationInfo.insUserid == session.USER_INFO.userid}">삭제</button>
+                            <button class="btn btn-secondary" type="button" onclick="goBack()">목록</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/assets/js/jquery-qrcode-0.18.0.min.js}"></script>
+    <script>
+        $(document).ready(function ($) {
+            $("video").bind( 'contextmenu', function() { return false; } );
+        });
+
+        function playStop() {
+            console.log("playStop()");
+
+            if ($("#btnPlayStop").text() == "play") {
+                $("#video").get(0).play();
+                $("#btnPlayStop").text("stop");
+            } else {
+                $("#video").get(0).pause();
+                $("#btnPlayStop").text("play")
+            }
+
+
+        }
+    </script>
+    <script>
+        var options = {
+            // render method: 'canvas', 'image' or 'div'
+            render: 'canvas',
+
+            // version range somewhere in 1 .. 40
+            minVersion: 1,
+            maxVersion: 40,
+
+            // error correction level: 'L', 'M', 'Q' or 'H'
+            ecLevel: 'L',
+
+            // offset in pixel if drawn onto existing canvas
+            left: 0,
+            top: 0,
+
+            // size in pixel
+            size: 100,
+
+            // code color or image element
+            fill: '#47669F',
+
+            // background color or image element, null for transparent background
+            background: null,
+
+            // content
+            text: "https://ecc.haesungds.net:9006/checkUserid?qrUrl=" + $("#qrUrl").val(),
+
+            // corner radius relative to module width: 0.0 .. 0.5
+            radius: 0,
+
+            // quiet zone in modules
+            quiet: 0,
+
+            // modes
+            // 0: normal
+            // 1: label strip
+            // 2: label box
+            // 3: image strip
+            // 4: image box
+            mode: 0,
+
+            mSize: 0.1,
+            mPosX: 0.5,
+            mPosY: 0.5,
+
+            label: 'no label',
+            fontname: 'sans',
+            fontcolor: '#000',
+
+            image: null
+        }
+
+        function makeQRCode() {
+            $("#qrCodeView").children().remove()
+            $("#qrCodeView").qrcode(options);
+
+            let image = document.querySelector("#qrCodeView > canvas").toDataURL("image/png");
+            image = image.replace('data:image/png;base64,', '');
+            //console.log(image);
+
+            //$("#imageData").val(image);
+
+            let params = {};
+            params.eduTitle = "[[${educationInfo.eduTitle}]]";
+            params.eduId = "[[${educationInfo.eduId}]]";
+            params.imageData = image;
+            //ajaxJsonCall("/ecoc/uploadQRCodeImage", params, function (data) {
+            ajaxJsonCall("/ecoc/uploadQRCodeImage", params, function (data) {
+                console.log(data);
+                if (data.fields.RESULT_CD == "S") {
+
+                    toastrSuccess();
+                    $("#btnQRMake").hide();
+                    $("#btnQRDownload").show();
+                } else {
+                    console.log(data.errMsg);
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function goModify() {
+            location.href = "/ecoc/educationModify?eduId=[[${educationInfo.eduId}]]";
+        }
+
+        function deleteProc() {
+            if(!confirm("삭제하시겠습니까?")) return;
+
+            let params = {};
+            params.eduId = "[[${educationInfo.eduId}]]";
+            ajaxJsonCall("/ecoc/educationDeleteProc", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+
+                    toastrSuccess();
+                    setTimeout(function () {
+                        location.href = "/ecoc/educationList";
+                    }, 1000);
+                } else {
+                    console.log(data.errMsg);
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function goBack() {
+            location.href = "/ecoc/educationList";
+        }
+    </script>
+
+</th:block>
+</html>

@@ -1,0 +1,135 @@
+<!--<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>403 Error</title>
+    <style>
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+    </style>
+    <link th:href="@{/assets/bootstrap/css/bootstrap.min.css}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="wrapper">
+    <div class="card text-dark bg-light mb-3">
+        <div class="card-header">Logout</div>
+        <div class="card-body">
+            <h5 class="card-title"></h5>
+            <p class="card-text">정상적으로 로그아웃 되었습니다.</p>
+            <p class="card-text"></p>
+            <button type="button" class="btn btn-primary" style="float: right;" onclick="closeWindow()">창닫기</button>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    function closeWindow() {
+        window.close();
+    }
+</script>
+</html>-->
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--  <meta name="description" content="viho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">-->
+    <!--  <meta name="keywords" content="admin template, viho admin template, dashboard template, flat admin template, responsive admin template, web app">-->
+    <meta name="author" content="pixelstrap">
+    <link rel="icon" href="../img/hs_logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../img/hs_logo.png" type="image/x-icon">
+    <title>Eye-CoC</title>
+
+    <!-- 공통 헤드(CSS)-->
+    <th:block th:replace="/thymeleaf/layout/fragments/head :: headFragment"></th:block>
+    <script type="text/javascript" th:src="@{/assets/js/toastr/toastr.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/toastr/toastr-custom.js}"></script>
+    <!--<script type="text/javascript" th:src="@{/assets/js/form-validation-custom.js}"></script>-->
+    <script>
+        function closeWindow() {
+            //window.open('', '_self', '');
+            window.close();
+            //return false;
+        }
+
+        function goLogin() {
+            location.href = "/sloLogin"
+        }
+    </script>
+</head>
+<body>
+
+
+<body>
+<!-- Loader starts-->
+<div class="loader-wrapper">
+    <div class="theme-loader">
+        <div class="loader-p"></div>
+    </div>
+</div>
+<!-- Loader ends-->
+<!-- page-wrapper Start       -->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+
+    <!-- Page Header Start-->
+    <!--<th:block th:replace="/thymeleaf/layout/fragments/top :: topFragment"></th:block>-->
+    <!-- Page Header Ends-->
+
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper sidebar-icon">
+        <!-- Page Sidebar Start-->
+        <!--<th:block th:replace="/thymeleaf/layout/fragments/sidebar :: sidebarFragment"></th:block>-->
+        <th:block th:replace="/thymeleaf/layout/fragments/script :: scriptFragment"></th:block>
+        <!-- Page Sidebar Ends-->
+        <div class="page-body" style="margin-right: 290px;">
+            <!-- Container-fluid starts-->
+            <!--<th:block layout:fragment="content"></th:block>-->
+            <!-- Container-fluid Ends-->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-header pb-0">
+                                <h5>로그아웃</h5>
+                            </div>
+                            <div class="card-body">
+                                <span>정상적으로 로그아웃 되었습니다.</span>
+                            </div>
+                            <div class="card-footer">
+                                <!--<button type="button" class="btn btn-primary" style="float: right;" onclick="closeWindow()">창닫기</button>-->
+                                <button type="button" class="btn btn-primary" style="float: right;" onclick="goLogin()">로그인으로</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4"></div>
+                </div>
+            </div>
+        </div>
+        <!-- footer start-->
+        <!--<th:block th:replace="/thymeleaf/layout/fragments/footer :: footerFragment"></th:block>-->
+        <!-- footer Ends-->
+    </div>
+</div>
+
+
+
+</body>
+
+
+</body>
+</html>

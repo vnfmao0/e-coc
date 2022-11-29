@@ -1,0 +1,91 @@
+<!-- 품목관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout_chkUserid}">
+
+<th:block layout:fragment="content">
+
+    <div class="row m-t-50">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>■ 사용권한 체크 ■</h5>
+                </div>
+                <div class="card-body pt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <span>인가된 인원만 사용이 가능합니다.</span><br/>
+                            <span>사번을 입력하십시오.</span><br/>
+                            <span>시청이 안될 경우 정보전략으로 연락주십시오.</span><br/>
+                        </div>
+                    </div>
+                    <div class="row pt-3">
+                        <div class="col-9">
+                            <div class="row">
+                                <label class="col-5 col-form-label text-end">MES 사번</label>
+                                <div class="col-7">
+                                    <input class="form-control" type="text" id="chkUserid" name="chkUserid">
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <label class="col-5 col-form-label text-end">MES 암호</label>
+                                <div class="col-7">
+                                    <input class="form-control" type="password" id="chkPassword" name="chkPassword">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-primary h-100" type="button" onclick="checkUserid()">확인</button>
+                        </div>
+                    </div>
+                    <!--<div class="row pt-3">
+                        <label class="col-3 col-form-label text-end">사번</label>
+                        <div class="col-6">
+                            <input class="form-control" type="text" id="chkUserid" name="chkUserid">
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-primary h-100" type="button" onclick="checkUserid()">확인</button>
+                        </div>
+                    </div>-->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+
+
+        function checkUserid() {
+
+            if($("#chkUserid").val() == ""){
+                toastrWarning("사번을 입력하세요.");
+                return;
+            }
+            if($("#chkPassword").val() == ""){
+                toastrWarning("암호를 입력하세요.");
+                return;
+            }
+
+            var params = {};
+            params.chkUserid = $("#chkUserid").val();
+            params.chkPassword = $("#chkPassword").val();
+
+            ajaxJsonCall("/checkUseridProc", params, function (data) {
+
+                if (data.fields.RESULT_CD == "S") {
+                    location.href = "[[${qrUrl}]]";
+                } else {
+                    //alert("사용권한이 없습니다.");
+                    alert(data.errMsg)
+                }
+            });
+        }
+
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>damo EDITOR</title>
+<link type="text/css" href="../damoEditor.css" rel="stylesheet"/>
+<script type="text/javascript" src="../damoEditor.js" ></script>
+<script>
+// 폰트 추가
+var myArea1;
+window.onload = function() {
+	var option = {
+		fonts: ["NanumBarunGothic", "나눔바른고딕", "돋움", "돋움체"]
+	};
+	
+	myArea1 = new DamoEditor("myArea1", option);
+}; 
+
+</script>
+</head>
+<body>
+	<textarea name="myArea1" id="myArea1"  style="width: 99%; height: 500px" readonly="readonly"></textarea>
+</body>	
+</html>

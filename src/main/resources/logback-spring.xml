@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <!--  Appenders -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d %5p [%c] %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console-infolog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d %5p %m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- 로거 -->
+    <springProfile name="local">
+        <logger name="kr.co.haesungds" level="DEBUG" append-ref="console"/>
+        <logger name="jdbc.sqlonly" level="INFO" appender-ref="console-infolog"/>
+        <logger name="jdbc.resultsettable" level="INFO" appender-ref="console-infolog"/>
+    </springProfile>
+
+    <springProfile name="dev">
+        <logger name="kr.co.haesungds" level="DEBUG" append-ref="console"/>
+        <logger name="jdbc.sqlonly" level="INFO" appender-ref="console-infolog"/>
+        <logger name="jdbc.resultsettable" level="INFO" appender-ref="console-infolog"/>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="haesungds" level="ERROR" append-ref="console"/>
+
+        <logger name="kr.co.haesungds" level="DEBUG" append-ref="console"/>
+        <logger name="jdbc.sqltiming" 	level="DEBUG" append-ref="console"/>
+        <logger name="jdbc.sqlonly" level="INFO" appender-ref="console"/>
+        <logger name="jdbc.resultsettable" level="INFO" appender-ref="console"/>
+        <logger name="jdbc.connection" level="DEBUG" appender-ref="console"/>
+    </springProfile>
+
+    <!-- 루트 로거 -->
+    <root level="error">
+        <appender-ref ref="console"/>
+    </root>
+</configuration>

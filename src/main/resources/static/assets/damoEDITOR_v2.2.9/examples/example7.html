@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>damo EDITOR</title>
+<link type="text/css" href="../damoEditor.css" rel="stylesheet"/>
+<script type="text/javascript" src="../damoEditor.js" ></script>
+<script>
+// 편집 모드 없애기
+var myArea1;
+window.onload = function() {
+	var option = {
+		useEditMode: false, 
+		useMiniButton: true
+	};
+	myArea1 = new DamoEditor("myArea1", option);
+}; 
+
+</script>
+</head>
+<body>
+	<textarea name="myArea1" id="myArea1"  style="width: 470px; height: 100px"></textarea>
+</body>	
+</html>

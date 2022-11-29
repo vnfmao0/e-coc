@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="convertFileGuidePopup">
+    <div class="modal fade" id="convertFileGuidePopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="max-width: 1315px;" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schUser">동영상 파일 변환 가이드</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <label class="col-2 col-form-label">인코더 다운로드</label>
+                            <div class="col mt-2">
+                                <a th:href="@{/cmmfile/downloadPotEncoder}">DaumPotEncoder21453.exe</a>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col">
+                                <img alt="" th:src="@{/cmmfile/getThumbImage?IMG_PATH=} + '/fileConvertGuide.PNG'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</th:block>
+</html>

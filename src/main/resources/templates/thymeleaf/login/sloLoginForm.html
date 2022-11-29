@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>로그인</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/assets/css/bootstrap.css}"
+          href="/assets/css/bootstrap.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/assets/css/signin.css}"
+          href="/assets/css/signin.css" rel="stylesheet">
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+    <script type="text/javascript" th:src="@{/assets/js/jquery-3.5.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/slo/hmac-sha256.js}"></script>
+    <script type="text/javascript" th:src="@{/slo/enc-base64-min.js}"></script>
+
+    <script language="javascript">
+        /*
+        Subject : Token 암호화
+        Method : GetEncryptToken
+        Param : pEmpNo(사번), pSLOKey(SecretKey)
+        Description : 암호화할 데이터와 SecretKey를 전달받아 토큰을 생성
+         */
+        function GetEncryptToken(pEmpNo, pSLOKey) {
+
+            // Defining our token parts
+            var header = {
+                "alg" : "HS256",
+                "typ" : "JWT"
+            };
+
+            var now = Date.now();
+            var exp = now + 60000;
+
+            var data = {
+                "iat" : now,
+                "exp" : exp,
+                "emp" : pEmpNo
+            };
+
+            var secret = pSLOKey;
+
+            var stringifiedHeader = CryptoJS.enc.Utf8.parse(JSON.stringify(header));
+            var encodedHeader = base64url(stringifiedHeader);
+
+            var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
+            var encodedData = base64url(stringifiedData);
+
+            var signature = encodedHeader + "." + encodedData;
+            signature = CryptoJS.HmacSHA256(signature, secret);
+            signature = base64url(signature);
+
+            var token = encodedHeader + "." + encodedData + "." + signature;
+
+            return token;
+        }
+
+        /*
+        Subject : Token 복호화
+        Method : decodeToken
+        Param : token(토큰), secretKey(SecretKey)
+        Description : 암호화된 Token을 복호화
+         */
+        function decodeToken(token, secretKey) {
+            var jsonPayload = "INVALID";
+            var signiture = token.split('.')[2];
+            if (CheckTokenValidation(token, secretKey)) {
+                var base64Url = token.split('.')[1];
+                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                jsonPayload = decodeURIComponent(atob(base64).split('').map(
+                    function(c) {
+                        return '%'
+                            + ('00' + c.charCodeAt(0).toString(16))
+                                .slice(-2);
+                    }).join(''));
+            }
+            return jsonPayload;
+        }
+
+        //Token 유효성 체크
+        function CheckTokenValidation(token, secretKey) {
+            var data = token.split('.')[0] + "." + token.split('.')[1];
+            var signiture = token.split('.')[2];
+
+            data = CryptoJS.HmacSHA256(data, secretKey);
+            data = base64url(data);
+            if (data == signiture)
+                return true;
+
+            return false;
+        }
+
+        function base64url(source) {
+            // Encode in classical base64
+            encodedSource = CryptoJS.enc.Base64.stringify(source);
+
+            // Remove padding equal characters
+            encodedSource = encodedSource.replace(/=+$/, '');
+
+            // Replace characters according to base64url specifications
+            encodedSource = encodedSource.replace(/\+/g, '-');
+            encodedSource = encodedSource.replace(/\//g, '_');
+
+            return encodedSource;
+        }
+
+        function btnEnc_onClick() {
+            var emp = $("#txtEmpNo").val();
+            var key = $("#txtSecretKey").val();
+            var token = GetEncryptToken(emp, key);
+            $("#txtToken").val(token);
+
+        }
+
+        function btnDec_onClick() {
+
+            // 3개만 넘어옴 나머지 필요 정보는 쿼리해서 사용
+            var token = "[[${EP_SABUN}]]";
+            var token2 = "[[${EP_MAIL}]]";
+            var token3 = "[[${EP_USERID}]]";
+
+            var key = "ECC"; // 각자 시스템
+
+
+            $("#userid").val(test(token, key));
+            $("#txtEP_MAIL").val(test(token2, key));
+            $("#txtEP_USERID").val(test(token3, key));
+
+            //여기에 그룹웨어로 가는 로직 넣어야 함
+            if ("Token TIME Exp." == $("#userid").val()) {
+                alert("이미 만료된 토큰 정보로 로그인 시도하였습니다.\n그룹웨어에서 다시 접속해 주세요.");
+                self.close();
+                return false;
+            } else if("faild" == $("#userid").val()) {
+                alert("잘못된 정보로 로그인 시도하였습니다.\n그룹웨어에서 다시 접속해 주세요.");
+                self.close();
+                return false;
+            } else {
+                $("#userid").val("slo_" + $("#userid").val());
+                form1.submit();
+            }
+
+        }
+
+        function test(token, key) {
+            var token = token;
+            var key = key;
+
+            var decode = decodeToken(token, key);
+
+            if (decode == "INVALID") {
+                return "faild";
+            } else {
+
+                var payload = JSON.parse(decode);
+
+                var now = Date.now();
+                if (now > payload.iat && now < payload.exp) {
+
+                    return payload.emp;
+
+                } else { //토큰 시간 만료
+                    return "Token TIME Exp.";
+                }
+            }
+
+        }
+
+        function fn_onload() {
+            // if("true" == "[[${error}]]") {
+            //     alert("세션이 끊어졌습니다.\n그룹웨어를 통해 다시 로그인해 주세요.");
+            // }
+            if ("[[${EP_SABUN}]]" != "") {
+                btnDec_onClick();
+            }
+
+            /*
+            var rrtn = EpAdmC.GetSecureBox();
+            if(rrtn != "") {
+                form1.totaldata.value = rrtn;
+                form1.submit();
+
+            } else {
+                alert("그룹웨어 접속 상태가 아닙니다. 그룹웨어 로그인 화면으로 이동합니다.");
+                top.location.href="http://www.haesungds.net";
+            }
+            }
+
+            function fn_close() {
+            if(navigator.appVersion.indexOf("MSIE 7.") >= 0 || navigator.appVersion.indexOf("MSIE 8.") >= 0  ||
+             navigator.appVersion.indexOf("MSIE 9.") >= 0 || navigator.appVersion.indexOf("MSIE 10.") >=0  ||
+             navigator.appVersion.indexOf("Trident") >= 0  ) {
+
+                window.open('about:blank','_self').close();
+            } else {
+
+                window.opener = self;
+                self.close();
+            }
+             */
+        }
+    </script>
+</head>
+<body class="text-center" onLoad="javascript:fn_onload()">
+    <main class="form-signin" th:style="${#strings.isEmpty(EP_SABUN) == false ? 'display:none' : ''}">
+        <form name="form1" action="/sloLoginProc" th:action="@{/sloLoginProc}" th:object="${userDto}" method="post" autocomplete=off>
+            <input type="hidden" name="token" value="ken" />
+
+            <img class="mb-4" src="/img/logo.svg" th:src="@{/img/logo.svg}" alt="" style="width: 240px;">
+            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+            <div class="form-floating">
+                <input type="text" class="form-control" id="userid" placeholder="사번을 입력하세요."
+                       th:field="*{userid}"
+                       th:errorclass="field-error"
+                       th:style="${#strings.contains(#httpServletRequest.getHeader('user-agent'), 'Trident') ? 'padding-top: 22px;' : ''}">
+                <div class="field-error" th:errors="*{userid}" />
+                <label for="userid"
+                    th:style="${#strings.contains(#httpServletRequest.getHeader('user-agent'), 'Trident') ? 'padding-top: 0px' : ''}">Id</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="passwd" placeholder="비번을 입력하세요."
+                       th:field="*{passwd}"
+                       th:errorclass="field-error"
+                       th:style="${#strings.contains(#httpServletRequest.getHeader('user-agent'), 'Trident') ? 'padding-top: 22px' : ''}">
+                <label for="passwd"
+                       th:style="${#strings.contains(#httpServletRequest.getHeader('user-agent'), 'Trident') ? 'padding-top: 0px' : ''}">Password</label>
+            </div>
+
+            <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" value="remember-me"> Remember me
+                </label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+        </form>
+    </main>
+</body>
+
+</html>

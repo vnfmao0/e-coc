@@ -1,0 +1,206 @@
+<!-- 품목관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout}">
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>동영상 교육</h5>
+                    <span>동영상을 통한 현장작업자 실무 교육을 진행합니다.</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12 col-xl-12 text-end">
+                            <button class="btn btn-secondary" type="button" onclick="addRfqReq()" sec:authorize="hasAnyAuthority('ADMIN', 'ECC_MANAGER', 'ADMIN_WRITE')">등록</button>
+                            <button class="btn btn-secondary" type="button" onclick="search()">조회</button>
+                            <button class="btn btn-secondary" type="button" onclick="showConvertInfo()">동영상 파일 변환 가이드</button>
+                        </div>
+                    </div>
+                    <form id="schForm" method="get" action="/p1612/p161201_01">
+                        <div class="row m-t-5 m-b-5">
+                            <div class="col-12">
+                                <div class="border p-2" style="background-color: #f5f7fb !important;">
+                                    <div class="row m-b-5">
+                                        <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">대분류</label>
+                                        <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                            <select class="form-control form-control-primary btn-square" id="schEduGrpLv1" name="schEduGrpLv1" th:onchange="chgEduLv1()">
+                                                <option value="">대분류를 선택하세요.</option>
+                                                <th:block th:if="${#lists.isEmpty(eduLv1List) != true}" th:each="eduLv1 : ${eduLv1List}">
+                                                    <option th:value="${eduLv1.code}" th:text="${eduLv1.codeNm}">코드명</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">중분류</label>
+                                        <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                            <select class="form-control form-control-primary btn-square" id="schEduGrpLv2" name="schEduGrpLv2">
+                                                <option value="">중분류를 선택하세요.</option>
+                                            </select>
+                                        </div>
+                                        <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">제목</label>
+                                        <div class="col-sm-9 col-md-5 col-lg-5 col-xl-5">
+                                            <input class="form-control" type="text" id="schEduTitle" name="schEduTitle">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="card-block row">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+                            <div id="realgrid" style="width: 100%; height: 600px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="/thymeleaf/e-coc/edu/convertFileGuidePopup :: convertFileGuidePopup"></th:block>
+
+    <script>
+        var container, provider, gridView;
+        document.addEventListener('DOMContentLoaded', function () {
+            container = document.getElementById('realgrid');
+            provider = new RealGrid.LocalDataProvider(false);
+            gridView = new RealGrid.GridView(container);
+            gridView.setDataSource(provider);
+
+            // 필드 생성
+            provider.setFields([
+
+                {   fieldName: "eduId",         dataType: "text",   },
+                {   fieldName: "eduGrpCd1",     dataType: "text",   },
+                {   fieldName: "eduGrpCd1Nm",   dataType: "text",   },
+                {   fieldName: "eduGrpCd2",     dataType: "text",   },
+                {   fieldName: "eduGrpCd2Nm",   dataType: "text",   },
+                {   fieldName: "eduType",       dataType: "text",   },
+                {   fieldName: "eduTypeNm",     dataType: "text",   },
+                {   fieldName: "eduTitle",      dataType: "text",   },
+                {   fieldName: "eduContent",    dataType: "text",   },
+                {   fieldName: "qrUse",         dataType: "text",   },
+                {   fieldName: "qrUrl",         dataType: "text",   },
+                {   fieldName: "insDttm",       dataType: "datetime", datetimeFormat: "yyyy-MM-dd"   },
+                {   fieldName: "insUserid",     dataType: "text",   },
+                {   fieldName: "insUserNm",     dataType: "text",   },
+                {   fieldName: "updDttm",       dataType: "datetime", datetimeFormat: "yyyy-MM-dd"   },
+                {   fieldName: "updUserid",     dataType: "text",   },
+                {   fieldName: "updUserNm",     dataType: "text",   },
+            ]);
+
+            // 컬럼 생성
+            gridView.setColumns([
+
+
+                {   name: "eduId",         fieldName: "eduId",         type: "data",   width: "100",   header: {   text: "교육번호",     },  },
+                {   name: "eduType",       fieldName: "eduType",       type: "data",   width: "100",   header: {   text: "교육타입",     },  visible: false,  },
+                {   name: "eduTypeNm",     fieldName: "eduTypeNm",     type: "data",   width: "100",   header: {   text: "교육타입",     },  },
+                {   name: "eduGrpCd1",     fieldName: "eduGrpCd1",     type: "data",   width: "100",   header: {   text: "대분류",       },  visible: false,  },
+                {   name: "eduGrpCd1Nm",   fieldName: "eduGrpCd1Nm",   type: "data",   width: "100",   header: {   text: "대분류",       },  },
+                {   name: "eduGrpCd2",     fieldName: "eduGrpCd2",     type: "data",   width: "100",   header: {   text: "중분류",       },  visible: false,  },
+                {   name: "eduGrpCd2Nm",   fieldName: "eduGrpCd2Nm",   type: "data",   width: "100",   header: {   text: "중분류",       },  },
+                {   name: "eduTitle",      fieldName: "eduTitle",      type: "data",   width: "450",   header: {   text: "제목",         },  styleName: "left-column",  },
+                {   name: "eduContent",    fieldName: "eduContent",    type: "data",   width: "100",   header: {   text: "내용",         },  visible: false,  },
+                {   name: "qrUse",         fieldName: "qrUse",         type: "data",   width: "100",   header: {   text: "QR 사용여부",  },  },
+                {   name: "qrUrl",         fieldName: "qrUrl",         type: "data",   width: "200",   header: {   text: "QR URL",       },  styleName: "left-column",  },
+                {   name: "insDttm",       fieldName: "insDttm",       type: "data",   width: "100",   header: {   text: "등록일자",     },  datetimeFormat: "yyyy-MM-dd",  },
+                {   name: "insUserid",     fieldName: "insUserid",     type: "data",   width: "100",   header: {   text: "등록자아이디", },  visible: false,  },
+                {   name: "insUserNm",     fieldName: "insUserNm",     type: "data",   width: "100",   header: {   text: "등록자명",     },  },
+                {   name: "updDttm",       fieldName: "updDttm",       type: "data",   width: "100",   header: {   text: "수정일자",     },  datetimeFormat: "yyyy-MM-dd",  },
+                {   name: "updUserid",     fieldName: "updUserid",     type: "data",   width: "100",   header: {   text: "수정자아이디", },  visible: false,  },
+                {   name: "updUserNm",     fieldName: "updUserNm",     type: "data",   width: "100",   header: {   text: "수정자명",     },  },
+
+            ]);
+
+            gridView.displayOptions.showEmptyMessage = true;
+            gridView.displayOptions.emptyMessage = "표시할 데이타가 없습니다.";
+
+            //체크박스(false), 라디오버튼(true)
+            gridView.setCheckBar({  exclusive: true, visible: false    });
+            //상태바 표시여부
+            gridView.setStateBar({  visible: false  });
+            //하단 소계 감추기
+            gridView.footers.visible = false;
+            gridView.editOptions.editable = false;
+
+            gridView.header.height = 36;
+            gridView.displayOptions.rowHeight = 36;
+
+            gridView.onCellDblClicked = function(grid, clickData) {
+                var data = gridView.getJsonRows(clickData.itemIndex, clickData.itemIndex);
+                location.href = "/ecoc/educationView?eduId=" + data[clickData.itemIndex].eduId;
+            }
+
+            search();
+        });
+
+        function chgEduLv1() {
+
+            if($("#schEduGrpLv1").val() == ""){
+                $('#schEduGrpLv2').children('option:not(:first)').remove();
+                return;
+            }
+
+            var params = {};
+            params.legCd = "ECC";
+            params.grpCd = "EDU_GRP_LV2";
+            params.info1 = $("#schEduGrpLv1").val();
+
+            ajaxJsonCall("/ecoc/selectCmmLegCode", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+
+                    $('#schEduGrpLv2').children('option:not(:first)').remove();
+
+                    if (data.fields.cmmLegCodeList.length == 0) {
+                        toastrWarning("조회된 중분류가 없습니다.");
+                        return;
+                    }
+                    $.each(data.fields.cmmLegCodeList, function(idx, typeLv2) {
+                        $('#schEduGrpLv2') .append($("<option></option>") .attr("value",typeLv2.code) .text(typeLv2.codeNm));
+                    });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function search() {
+            if ($("#schEduTitle").val().trim().length == 1) {
+                toastrWarning("검색어는 두글자 이상 입력하세요.");
+                return;
+            }
+            provider.clearRows();
+            var params = {};
+            params.schEduGrpLv1   = $("#schEduGrpLv1").val();
+            params.schEduGrpLv2   = $("#schEduGrpLv2").val();
+            params.schEduTitle  = $("#schEduTitle").val();
+
+            ajaxJsonCall("/ecoc/educationSelect", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+                    if (data.fields.educationList.length == 0) {
+                        toastrWarning("조회된 교육내역이 없습니다.");
+                        return;
+                    }
+
+                    provider.fillJsonData(data.fields.educationList, { fillMode: "set" });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function addRfqReq() {
+            location.href = "/ecoc/educationRegist";
+        }
+
+        function showConvertInfo() {
+            $("#convertFileGuidePopup").modal("show");
+        }
+    </script>
+</th:block>
+</html>

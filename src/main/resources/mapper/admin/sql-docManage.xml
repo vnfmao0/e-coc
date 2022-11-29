@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.ecoc.admin.mapper.DocManagerMapper">
+    <select id="selectDocList" parameterType="map" resultType="docManage">
+        SELECT DOC_ID
+             , LEG_CD
+             , DOC_TITLE
+             , DOC_CONTENT
+             , PARENT_DOC_ID
+             , INS_DTTM
+             , INS_USERID
+             , UPD_DTTM
+             , UPD_USERID
+          FROM CMM_LEG_DOC_MANAGE
+         WHERE 1=1
+        <if test="docId != null and docId != ''">
+           AND DOC_ID = #{schDocId}
+        </if>
+        <if test="docTitle != null and docTitle != ''">
+            AND DOC_TITLE = #{docTitle}
+        </if>
+        
+    </select>
+
+    <insert id="insertDocManage" parameterType="map">
+        <selectKey keyProperty="docId" resultType="String" order="BEFORE">
+            SELECT LEGSM.CMM_LEG_DOC_MANAGE_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+
+        INSERT INTO CMM_LEG_DOC_MANAGE (
+            DOC_ID
+           , LEG_CD
+           , DOC_TITLE
+           , DOC_CONTENT
+           , PARENT_DOC_ID
+           , INS_DTTM
+           , INS_USERID
+           , UPD_DTTM
+           , UPD_USERID
+        )
+        VALUES (
+             #{docId}
+           , #{legCd}
+           , #{docTitle}
+           , #{docContent}
+           , #{parentDocId}
+           , SYSDATE
+           , #{insUserid}
+           , SYSDATE
+           , #{updUserid}
+        )
+    </insert>
+</mapper>

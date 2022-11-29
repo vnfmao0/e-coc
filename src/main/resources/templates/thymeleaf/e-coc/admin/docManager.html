@@ -1,0 +1,164 @@
+<!-- 품목관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout}">
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <!--<div class="col-md-12">부산물관리-견적요청</div>-->
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>관리자 > 문서관리</h5>
+                    <span>Eye-CoC 시스템 관련 문서를 관리합니다.</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12 col-xl-12 text-end">
+                            <button class="btn btn-secondary" type="button" onclick="addRfqReq()">등록</button>
+                            <button class="btn btn-secondary" type="button" onclick="search()">조회</button>
+                        </div>
+                    </div>
+                    <div class="row m-t-5 m-b-5">
+                        <div class="col-12">
+                            <div class="border p-2" style="background-color: #f5f7fb !important;">
+                                <div class="row m-b-5">
+                                    <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">문서번호</label>
+                                    <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                        <input class="form-control" type="text" id="schDocId" name="schDocId">
+                                    </div>
+                                    <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">제목</label>
+                                    <div class="col-sm-9 col-md-5 col-lg-5 col-xl-5">
+                                        <input class="form-control" type="text" id="schDocTitle" name="schDocTitle">
+                                    </div>
+                                    <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">담당자</label>
+                                    <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                        <div class="input-group">
+                                            <input type="hidden" id="schInsUserid" name="schInsUserid">
+                                            <input class="form-control bg-white" type="text" id="schInsUserNm" name="schInsUserNm" placeholder="담당자를 검색하세요." readonly>
+                                            <span class="input-group-text" data-bs-toggle="modal" data-bs-target="#userPopup" data-whatever="@mdo" onclick="userPopup()"><i class="icofont icofont-ui-search"> </i></span>
+                                        </div>
+                                        <!--<input class="form-control" type="text" id="schInsUserNm" name="schInsUserNm">-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block row">
+                        <div class="col-sm-12 col-lg-12 col-xl-12">
+                            <div id="realgrid" style="width: 100%; height: 600px"></div>
+                        </div>
+                    </div>
+                </div>
+                <!--업체선정 팝업-->
+                <th:block th:replace="/thymeleaf/layout/fragments/popupCollect :: userPopup"></th:block>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var container, provider, gridView;
+        document.addEventListener('DOMContentLoaded', function () {
+            container = document.getElementById('realgrid');
+            provider = new RealGrid.LocalDataProvider(false);
+            gridView = new RealGrid.GridView(container);
+            gridView.setDataSource(provider);
+
+            // 필드 생성
+            provider.setFields([
+                {   fieldName: "docId",        dataType: "text",   },
+                {   fieldName: "legCd",        dataType: "text",   },
+                {   fieldName: "docTitle",     dataType: "text",   },
+                {   fieldName: "parentDocId",  dataType: "text",   },
+                {   fieldName: "insDttm",      dataType: "text",   },
+                {   fieldName: "insUserid",    dataType: "text",   },
+                {   fieldName: "insUserNm",    dataType: "text",   },
+                {   fieldName: "updDttm",      dataType: "datetime",  datetimeFormat: "yyyy-MM-dd"  },
+                {   fieldName: "upUserid",     dataType: "text",  },
+                {   fieldName: "upUserNm",     dataType: "text",  },
+            ]);
+
+            // 컬럼 생성
+            gridView.setColumns([
+                {   name: "docId",        fieldName: "docId",        type: "data",   width: "100",   header: {   text: "문서번호",      },  },
+                {   name: "legCd",        fieldName: "legCd",        type: "data",   width: "100",   header: {   text: "Legacy Code",   },  },
+                {   name: "docTitle",     fieldName: "docTitle",     type: "data",   width: "400",   header: {   text: "제목",          },  },
+                {   name: "parentDocId",  fieldName: "parentDocId",  type: "data",   width: "100",   header: {   text: "상위문서번호",  },  },
+                {   name: "insDttm",      fieldName: "insDttm",      type: "data",   width: "100",   header: {   text: "등록일",        },  datetimeFormat: "yyyy-MM-dd"},
+                {   name: "insUserid",    fieldName: "insUserid",    type: "data",   width: "100",   header: {   text: "등록자아이디",  },  },
+                {   name: "insUserNm",    fieldName: "insUserNm",    type: "data",   width: "100",   header: {   text: "등록자명",      },  },
+                {   name: "updDttm",      fieldName: "updDttm",      type: "data",   width: "100",   header: {   text: "수정일",        },  datetimeFormat: "yyyy-MM-dd"},
+                {   name: "upUserid",     fieldName: "upUserid",     type: "data",   width: "100",   header: {   text: "수정자아이디",  },  },
+                {   name: "upUserNm",     fieldName: "upUserNm",     type: "data",   width: "100",   header: {   text: "수정자명",      },  },
+            ]);
+
+            //체크박스(false), 라디오버튼(true)
+            gridView.setCheckBar({  exclusive: true    });
+            //상태바 표시여부
+            gridView.setStateBar({  visible: false  });
+            //하단 소계 감추기
+            gridView.footers.visible = false;
+            gridView.editOptions.editable = false;
+
+            gridView.header.height = 36;
+            gridView.displayOptions.rowHeight = 36;
+
+            gridView.onCellDblClicked = function(grid, clickData) {
+                var data = gridView.getJsonRows(clickData.itemIndex, clickData.itemIndex);
+                location.href = "/p1614/p161401_02?rfqId=" + data[clickData.itemIndex].rfqId;
+            }
+
+            search();
+        });
+
+        function userPopup() {
+            if (gridView_empPop != null) {
+                empPopDestrory();
+            }
+
+            start_empPopByWorkTp("", "", "");
+            //$("#userPopup").bPopup();
+        }
+
+        function userPopReturnValue(grid, jsonData) {
+            console.log("userPopReturnValue()");
+            $("#schInsUserid").val(jsonData.length > 0 ? jsonData[0].USERID : "");
+            $("#schInsUserNm").val(jsonData.length > 0 ? jsonData[0].USER_NM : "");
+
+
+        }
+
+        function search() {
+            if ($("#schInsUserNm").val().trim().length == 1 ||
+                $("#schDocTitle").val().trim().length == 1) {
+                toastrWarning("검색어는 두글자 이상 입력하세요.");
+                return;
+            }
+            provider.clearRows();
+            var params = {};
+            params.schInsUserid = $("#schInsUserid").val();
+            params.schDocTitle  = $("#schDocTitle").val();
+            params.schDocId  = $("#schDocId").val();
+
+            ajaxJsonCall("/admin/docManageSearch", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+                    if (data.fields.docManageList.length == 0) {
+                        toastrWarning("조회된 문서내역이 없습니다.");
+                        return;
+                    }
+
+                    provider.fillJsonData(data.fields.docManageList, { fillMode: "set" });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function addRfqReq() {
+            location.href = "/admin/docManageIns";
+        }
+    </script>
+</th:block>
+</html>

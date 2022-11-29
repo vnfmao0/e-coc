@@ -1,0 +1,101 @@
+.w-5px{
+    width: 5px !important;
+}
+.w-10px{
+    width: 10px !important;
+}
+.w-20px{
+    width: 20px !important;
+}
+.w-30px{
+    width: 30px !important;
+}
+.w-40px{
+    width: 40px !important;
+}
+.w-50px{
+    width: 50px !important;
+}
+.w-60px{
+    width: 60px !important;
+}
+.w-70px{
+    width: 70px !important;
+}
+.w-80px{
+    width: 80px !important;
+}
+.w-90px{
+    width: 90px !important;
+}
+.w-100px{
+    width: 100px !important;
+}
+.w-110px{
+    width: 110px !important;
+}
+.w-120px{
+    width: 120px !important;
+}
+.w-130px{
+    width: 130px !important;
+}
+.w-140px{
+    width: 140px !important;
+}
+.w-150px{
+    width: 150px !important;
+}
+/* real grid */
+.right-column {
+    text-align: right;
+}
+.left-column {
+    text-align: left;
+}
+.center-column {
+    text-align: center;
+}
+.orange-column {
+    background: #f57c00
+}
+.light-blue-column {
+    background: #d0e7fb
+}
+.multi-line-css {
+    white-space: pre;
+}
+
+/* bootstrap custom */
+.modal-xxxl {
+    width: 90vw;
+    max-width: none;
+    height: 90%;
+    margin: 0; }
+.modal-xxxl .modal-content {
+    height: 100%;
+    border: 0;
+    border-radius: 0; }
+.modal-xxxl .modal-header {
+    border-radius: 0; }
+.modal-xxxl .modal-body {
+    overflow-y: auto; }
+.modal-xxxl .modal-footer {
+    border-radius: 0; }
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.btn-white {
+    color: #000;
+    background-color: #ffffff;
+    border-color: #e6edef;
+}
+
+.pr-10 {
+    padding-right: 10px !important;
+}
+
+.pl-10 {
+    padding-left: 10px !important;
+}

@@ -1,0 +1,314 @@
+<!-- 공급업체관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout}">
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>교육 동영상 수정</h5>
+                    <span>현장작업자 실무 교육을 위한 교육영상 정보를 수정합니다.</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            ▶ 교육 기본정보
+                        </div>
+                    </div>
+                    <div class="border p-2" style="background-color: #f5f7fb !important;">
+                        <div class="row m-b-5">
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">제목<span class="text-danger">*</span></label>
+                            <div class="col-sm-9 col-md-5 col-lg-5 col-xl-5">
+                                <input class="form-control bg-white" type="text" id="eduTitle" name="eduTitle" th:value="${educationInfo.eduTitle}">
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">대분류<span class="text-danger">*</span></label>
+                            <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                <!--<input class="form-control bg-white" type="text" id="eduGrpCd1" name="eduGrpCd1" th:value="${educationInfo.eduGrpCd1}">-->
+                                <select id="eduGrpCd1" name="eduGrpCd1" class="form-select" th:onchange="chgEduGrpCd1()">
+                                    <option value="">대분류를 선택하세요.</option>
+                                    <option th:if="${#lists.isEmpty(eduLv1List) == false}"
+                                            th:each="eduLv1 : ${eduLv1List}"
+                                            th:text="${eduLv1.codeNm}"
+                                            th:value="${eduLv1.code}"
+                                            th:selected="${eduLv1.code} == ${educationInfo.eduGrpCd1}">카테고리1
+                                    </option>
+                                </select>
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">중분류<span class="text-danger">*</span></label>
+                            <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                <!--<input class="form-control bg-white" type="text" id="eduGrpCd2" name="eduGrpCd2" th:value="${educationInfo.eduGrpCd2}">-->
+                                <select id="eduGrpCd2" name="eduGrpCd1" class="form-select">
+                                    <option value="">중분류를 선택하세요.</option>
+                                    <option th:if="${#lists.isEmpty(eduLv2List) == false}"
+                                            th:each="eduLv2 : ${eduLv2List}"
+                                            th:text="${eduLv2.codeNm}"
+                                            th:value="${eduLv2.code}"
+                                            th:selected="${eduLv2.code} == ${educationInfo.eduGrpCd2}">카테고리1
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row m-b-5">
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">교육종류<span class="text-danger">*</span></label>
+                            <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                <!--<input class="form-control bg-white" type="text" id="eduType" name="eduType" th:value="${educationInfo.eduType}">-->
+                                <select id="eduType" name="eduType" class="form-select">
+                                    <option value="MOVIE" th:selected="'MOVIE' == ${educationInfo.eduType}">동영상교육</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">QR 사용여부<span class="text-danger">*</span></label>
+                            <div class="col-sm-9 col-md-2 col-lg-2 col-xl-2">
+                                <!--<input class="form-control bg-white" type="text" id="qrUse" name="qrUse" th:value="${educationInfo.qrUse}">-->
+                                <select id="qrUse" name="qrUse" class="form-select">
+                                    <option value="Y" th:selected="'Y' == ${educationInfo.qrUse}">사용</option>
+                                    <option value="N" th:selected="'Y' != ${educationInfo.qrUse}">사용안함</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row m-b-5">
+                            <label class="col-sm-3 col-md-1 col-lg-1 col-xl-1 col-form-label text-end">교육내용<span class="text-danger">*</span></label>
+                            <div class="col-sm-9 col-md-11 col-lg-11 col-xl-11">
+                                <textarea class="form-control" id="eduContent" name="eduContent" rows="7" th:text="${educationInfo.eduContent}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            ▶ 교육용 동영상 첨부<span class="text-danger">*</span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <span class="text-primary">※ 파일용량 100MB 이하의 *.mp4, *.m4v 파일만 업로드 가능합니다.</span>
+                        </div>
+                    </div>
+                    <div class="border p-2 mb-3" style="background-color: #f5f7fb !important;">
+                        <div class="row">
+                            <div class="col-12 file-content">
+                                <!--<input class="form-control bg-white" type="text" th:value="${rfqFormFile.oriFileNm}" readonly th:if="${rfqFormFile != null}">-->
+                                <input class="form-control" type="file" id="eduMovieFile" name="eduMovieFile" accept="video/mp4">
+
+                                <ul id="ulEduFile" class="folder mt-1" th:if="${educationFile != null}">
+                                    <li class="folder-box" th:id="|file-list-${educationFile.fileSeq}|">
+                                        <div class="media"><i class="fa fa-file-archive-o f-36 txt-warning"></i>
+                                            <a th:href="@{/cmmfile/singleFileDownload/{fileSeq}(fileSeq=${educationFile.fileSeq})}">
+                                                <div class="media-body ms-3">
+                                                    <h6 class="mb-0" th:text="${educationFile.oriFileNm}">가나다라마바사</h6>
+                                                    <p th:text="|${#numbers.formatInteger(educationFile.fileSize, 1, 'COMMA')}Byte|">204 files, 50mb</p>
+                                                </div>
+                                            </a>
+                                            <i class="fa fa-times f-22 txt-danger" th:data-fileSeq="${educationFile.fileSeq}" th:data-listId="|file-list-${educationFile.fileSeq}|" th:onclick="|javascript:deleteEducationFile(this.getAttribute('data-fileSeq'), this.getAttribute('data-listId'))|"></i>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button class="btn btn-secondary" type="button" onclick="modify()" th:if="${educationInfo.insUserid == session.USER_INFO.userid}">저장</button>
+                            <button class="btn btn-secondary" type="button" onclick="goBack()">취소</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/assets/js/jquery-qrcode-0.18.0.min.js}"></script>
+    <script>
+        $(document).ready(function () {
+
+            //*.mp4, *.m4v 파일만 업로드 가능하도록...
+            $("#eduMovieFile").change(function(){
+
+                if ($(this).val() != "") {
+                    let ext = $(this).val().match(/\.([^\.]+)$/)[1];
+
+                    switch (ext) {
+                        case 'mp4':
+                        case 'm4v':
+                            break;
+                        default:
+                            toastrWarning("*.mp4, *.m4v 파일만 업로드 가능합니다.");
+                            this.value = '';
+                    }
+                }
+            });
+        });
+
+        function chgEduGrpCd1() {
+            if($("#eduGrpCd1").val() == ""){
+                $('#eduGrpCd2').children('option:not(:first)').remove();
+                return;
+            }
+
+            var params = {};
+            params.legCd = "ECC";
+            params.grpCd = "EDU_GRP_LV2";
+            params.info1 = $("#eduGrpCd1").val();
+
+            ajaxJsonCall("/ecoc/selectCmmLegCode", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+
+                    $('#eduGrpCd2').children('option:not(:first)').remove();
+
+                    //$("#proGrp1").append('<option value="option6">option6</option>');
+                    if (data.fields.cmmLegCodeList.length == 0) {
+                        toastrWarning("조회된 중분류가 없습니다.");
+                        return;
+                    }
+                    $.each(data.fields.cmmLegCodeList, function(idx, cmmLegCode) {
+                        $('#eduGrpCd2') .append($("<option></option>") .attr("value",cmmLegCode.code) .text(cmmLegCode.codeNm));
+                    });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+        function validate() {
+            if ($("#eduTitle").val() == "") {
+                toastrWarning("제목을 입력하세요.");
+                return false;
+            }
+            if ($("#eduContent").val() == "") {
+                toastrWarning("내용를 입력하세요.");
+                return false;
+            }
+            if ($("#eduGrpCd1").val() == "") {
+                toastrWarning("대분류를 선택하세요.");
+                return false;
+            }
+            if ($("#eduGrpCd2").val() == "") {
+                toastrWarning("중분류를 선택하세요.");
+                return false;
+            }
+            if ($("#qrUse").val() == "") {
+                toastrWarning("QR 사용여부를 선택하세요.");
+                return false;
+            }
+
+            let eduMovieFile = $("#eduMovieFile");
+            console.log($("#ulEduFile").length);
+            if ($("#ulEduFile").length > 0 && $("#ulEduFile").find(".folder-box").length > 0 && eduMovieFile[0].files.length > 0) {
+                toastrWarning("기존 동영상을 삭제 후 업로드 가능합니다.");
+                return false;
+            }
+
+            if (($("#ulEduFile").length == 0 || $("#ulEduFile").find(".folder-box").length == 0) && eduMovieFile[0].files.length == 0) {
+                toastrWarning("교육용 동영상을 첨부하세요.");
+                return false;
+            }
+
+            if (eduMovieFile[0].files[0].size > 104857600) {
+                toastrWarning("100MB 이하의 *.mp4 파일만 업로드 가능합니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+
+        function modify() {
+            console.log("modify()");
+
+            if(!validate()) return;
+            if(!confirm("저장하시겠습니까?")) return;
+
+            let params = fnGetParams();
+
+            let eduMovieFile = $("#eduMovieFile");
+            if (eduMovieFile[0].files.length > 0) {
+                let fileName =  eduMovieFile[0].files[0].name.split(".");
+                let fileExt = fileName[fileName.length-1];
+                params.qrUrl = '/mp4Stream?fileNm=' + "[[${educationInfo.eduId}]]" + '.' + fileExt;
+            }
+            //params.fileExt = fileExt;
+            params.eduId = "[[${educationInfo.eduId}]]";
+            //loadingOverlay("show");
+            ajaxJsonCall("/ecoc/educationModifyProc", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+
+
+                    if (eduMovieFile[0].files.length > 0) {
+                        uploadFile(data.fields.eduId);
+                    } else {
+                        //loadingOverlay("hide");
+                        toastrSuccess();
+                        setTimeout(function (){
+                            location.href = "/ecoc/educationList";
+                        }, 1000);
+                    }
+
+                } else {
+                    console.log(data.errMsg);
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function uploadFile(eduId) {
+            //견적서 업로드
+            let retUpload = 0;
+
+            let formData = new FormData();
+            formData.append("menuId", "MOVIE");
+            formData.append("parentId", eduId);
+            let eduMovieFile = $("#eduMovieFile");
+            formData.append("upfiles", eduMovieFile[0].files[0]);
+
+            $.ajax({
+                enctype: 'multipart/form-data',
+                url: '/cmmfile/multiFileupload',
+                data: formData,
+                type: 'post',
+                contentType: false,
+                processData: false,
+                async: false,
+                xhr: function () { //XMLHttpRequest 재정의 가능
+                    var xhr = $.ajaxSettings.xhr();
+                    xhr.upload.onprogress = function (e) { //progress 이벤트 리스너 추가
+                        //console.log("groupUpload.progress");
+                        var percent = e.loaded * 100 / e.total;
+                        //setProgress(percent);
+                    };
+                    return xhr;
+                },
+                success: function (ret) {
+                    console.log("success");
+                    console.log(ret);
+                    //uploadedFileInfo = ret.fields.FILE_INFOS;
+                    //게시물 등록
+                    //regist();
+                    //alert("완료");
+                    retUpload++;
+                    $.LoadingOverlay("hide");
+
+                    if (ret.fields.RESULT_CD == "S") {
+                        toastrSuccess();
+                        setTimeout(function () {
+                            location.href = "/ecoc/educationList";
+                        }, 1000);
+                    } else {
+                        alert("게시물은 저장했으나, 첨부파일을 업로드할 수 없습니다.\n사유 : " + ret.errMsg + "\n파일을 다시 업로드해 주세요.");
+
+                    }
+
+                }
+            });
+        }
+
+        function goBack() {
+            location.href = "/ecoc/educationView?eduId=[[${educationInfo.eduId}]]";
+        }
+
+        function deleteEducationFile(fileSeq, listId) {
+            deleteFileByFileSeq(fileSeq, listId);
+            //location.reload();
+        }
+    </script>
+
+</th:block>
+</html>

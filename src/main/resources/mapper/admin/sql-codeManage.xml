@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.ecoc.admin.mapper.CmmLegCodeMapper">
+    <!--공통코드-->
+    <select id="selectCmmCodeList" parameterType="map" resultType="CmmLegCode">
+        SELECT ROWNUM AS NUM
+        , CLC.LEG_CD
+        , CLC.GRP_CD
+        , CLC.SUB_GRP_CD
+        , CLC.CODE
+        , CLC.CODE_NM
+        , CLC.CODE_DESC
+        , CLC.SORT_ORD
+        , CLC.INFO1
+        , CLC.INFO2
+        , CLC.INFO3
+        , CLC.INFO4
+        , CLC.INFO5
+        , CLC.INFO6
+        , CLC.INFO7
+        , CLC.INFO8
+        , CLC.INFO9
+        , CLC.INFO10
+        , CLC.REMK
+        , CLC.USE_YN
+        , CLC.INS_DTTM
+        , CLC.INS_USERID
+        , CLC.UPD_DTTM
+        , CLC.UPD_USERID
+        , CLC.GRP_CD AS ORI_GRP_CD
+        , CLC.CODE AS ORI_CODE
+        FROM CMM_LEG_CODE CLC
+        WHERE LEG_CD = #{legCd}
+        <if test="grpCd != '' and grpCd != null">
+            AND GRP_CD = #{grpCd}
+        </if>
+        <if test="info1 != '' and info1 != null">
+            AND INFO1 = #{info1}
+        </if>
+        <if test="info2 != '' and info2 != null">
+            AND INFO2 = #{info2}
+        </if>
+        <if test="info3 != '' and info3 != null">
+            AND INFO3 = #{info3}
+        </if>
+        <if test="info4 != '' and info4 != null">
+            AND INFO4 = #{info4}
+        </if>
+        <if test="info5 != '' and info5 != null">
+            AND INFO5 = #{info5}
+        </if>
+        <if test="info6 != '' and info6 != null">
+            AND INFO6 = #{info6}
+        </if>
+        <if test="info7 != '' and info7 != null">
+            AND INFO7 = #{info7}
+        </if>
+        <if test="info8 != '' and info8 != null">
+            AND INFO8 = #{info8}
+        </if>
+        <if test="info9 != '' and info9 != null">
+            AND INFO9 = #{info9}
+        </if>
+        <if test="info10 != '' and info10 != null">
+            AND INFO10 = #{info10}
+        </if>
+        <if test="useYn != '' and useYn != null">
+            AND USE_YN = #{useYn}
+        </if>
+        ORDER BY CLC.GRP_CD, CLC.SORT_ORD
+    </select>
+
+    <select id="selectCmmLegCodeProLv2List" parameterType="map" resultType="cmmLegCode">
+        SELECT ROWNUM AS NUM
+             , CLC.LEG_CD
+             , CLC.GRP_CD
+             , CLC.SUB_GRP_CD
+             , CLC.CODE
+             , CLC.CODE_NM
+             , CLC.CODE_DESC
+             , CLC.SORT_ORD
+             , CLC.INFO1
+             , CLC.INFO2
+             , CLC.INFO3
+             , CLC.INFO4
+             , CLC.INFO5
+             , CLC.INFO6
+             , CLC.INFO7
+             , CLC.INFO8
+             , CLC.INFO9
+             , CLC.INFO10
+             , CLC.REMK
+             , CLC.USE_YN
+             , CLC.INS_DTTM
+             , CLC.INS_USERID
+             , CLC.UPD_DTTM
+             , CLC.UPD_USERID
+             , CLC.GRP_CD AS ORI_GRP_CD
+             , CLC.CODE AS ORI_CODE
+        FROM CMM_LEG_CODE CLC
+        WHERE LEG_CD = #{legCd}
+          AND GRP_CD = #{grpCd}
+          AND INFO1 = #{info1}
+    </select>
+
+    <insert id="insertCmmCode" parameterType="cmmLegCode">
+        INSERT INTO CMM_LEG_CODE (
+                                   LEG_CD
+                                 , GRP_CD
+                                 , SUB_GRP_CD
+                                 , CODE
+                                 , CODE_NM
+                                 , CODE_DESC
+                                 , SORT_ORD
+                                 , INFO1
+                                 , INFO2
+                                 , INFO3
+                                 , INFO4
+                                 , INFO5
+                                 , INFO6
+                                 , INFO7
+                                 , INFO8
+                                 , INFO9
+                                 , INFO10
+                                 , REMK
+                                 , USE_YN
+                                 , INS_DTTM
+                                 , INS_USERID
+                                 , UPD_DTTM
+                                 , UPD_USERID
+        )
+        VALUES (
+                   #{legCd}
+               , #{grpCd}
+               , #{subGrpCd}
+               , #{code}
+               , #{codeNm}
+               , #{codeDesc}
+               , #{sortOrd}
+               , #{info1}
+               , #{info2}
+               , #{info3}
+               , #{info4}
+               , #{info5}
+               , #{info6}
+               , #{info7}
+               , #{info8}
+               , #{info9}
+               , #{info10}
+               , #{remk}
+               , #{useYn}
+               , SYSDATE
+               , #{insUserid}
+               , SYSDATE
+               , #{updUserid}
+               )
+    </insert>
+
+    <update id="updateCmmCode" parameterType="cmmLegCode">
+        UPDATE CMM_LEG_CODE
+        SET LEG_CD       = #{legCd}
+          , GRP_CD       = #{grpCd}
+          , SUB_GRP_CD   = #{subGrpCd}
+          , CODE         = #{code}
+          , CODE_NM      = #{codeNm}
+          , CODE_DESC    = #{codeDesc}
+          , SORT_ORD     = #{sortOrd}
+          , INFO1        = #{info1}
+          , INFO2        = #{info2}
+          , INFO3        = #{info3}
+          , INFO4        = #{info4}
+          , INFO5        = #{info5}
+          , INFO6        = #{info6}
+          , INFO7        = #{info7}
+          , INFO8        = #{info8}
+          , INFO9        = #{info9}
+          , INFO10       = #{info10}
+          , REMK         = #{remk}
+          , USE_YN       = #{useYn}
+          , UPD_DTTM     = SYSDATE
+          , UPD_USERID   = #{updUserid}
+        WHERE LEG_CD = #{legCd}
+          AND GRP_CD = #{oriGrpCd}
+          AND CODE = #{oriCode}
+    </update>
+
+    <delete id="deleteCmmCode" parameterType="cmmLegCode">
+        DELETE FROM CMM_LEG_CODE
+        WHERE LEG_CD = #{legCd}
+          AND GRP_CD = #{grpCd}
+          AND CODE = #{code}
+    </delete>
+
+    <insert id="insertCmmLegCode" parameterType="cmmLegCode">
+        INSERT INTO CMM_LEG_CODE
+        (
+            LEG_CD
+        , GRP_CD
+        , SUB_GRP_CD
+        , CODE
+        , CODE_NM
+        , CODE_DESC
+        , SORT_ORD
+        , INFO1
+        , INFO2
+        , INFO3
+        , INFO4
+        , INFO5
+        , INFO6
+        , INFO7
+        , INFO8
+        , INFO9
+        , INFO10
+        , REMK
+        , USE_YN
+        , INS_DTTM
+        , INS_USERID
+        , UPD_DTTM
+        , UPD_USERID
+        )
+        VALUES (
+                   #{legCd}
+               , #{grpCd}
+               , #{subGrpCd}
+               , #{code}
+               , #{codeNm}
+               , #{codeDesc}
+               , #{sortOrd}
+               , #{info1}
+               , #{info2}
+               , #{info3}
+               , #{info4}
+               , #{info5}
+               , #{info6}
+               , #{info7}
+               , #{info8}
+               , #{info9}
+               , #{info10}
+               , #{remk}
+               , #{useYn}
+               , SYSDATE
+               , #{insUserid}
+               , SYSDATE
+               , #{updUserid}
+               )
+    </insert>
+    <update id="updateCmmLegCode" parameterType="cmmLegCode">
+        UPDATE CMM_LEG_CODE
+        SET LEG_CD       = #{legCd}
+          , GRP_CD       = #{grpCd}
+          , SUB_GRP_CD   = #{subGrpCd}
+          , CODE         = #{code}
+          , CODE_NM      = #{codeNm}
+          , CODE_DESC    = #{codeDesc}
+          , SORT_ORD     = #{sortOrd}
+          , INFO1        = #{info1}
+          , INFO2        = #{info2}
+          , INFO3        = #{info3}
+          , INFO4        = #{info4}
+          , INFO5        = #{info5}
+          , INFO6        = #{info6}
+          , INFO7        = #{info7}
+          , INFO8        = #{info8}
+          , INFO9        = #{info9}
+          , INFO10       = #{info10}
+          , REMK         = #{remk}
+          , USE_YN       = #{useYn}
+          , UPD_DTTM     = SYSDATE
+          , UPD_USERID   = #{updUserid}
+        WHERE LEG_CD = #{legCd}
+          AND GRP_CD = #{oriGrpCd}
+          AND CODE = #{oriCode}
+    </update>
+    <delete id="deleteCmmLegCode" parameterType="cmmLegCode">
+        DELETE FROM CMM_LEG_CODE
+        WHERE LEG_CD = #{legCd}
+          AND GRP_CD = #{grpCd}
+          AND CODE = #{code}
+    </delete>
+</mapper>

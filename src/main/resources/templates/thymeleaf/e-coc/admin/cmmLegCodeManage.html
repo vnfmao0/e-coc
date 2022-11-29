@@ -1,0 +1,291 @@
+<!-- 공통코드관리 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{thymeleaf/layout/layout}">
+
+<th:block layout:fragment="content">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5>공통코드 관리</h5>
+                    <span>Eye-CoC 시스템에서 사용할 공통코드를 관리합니다.</span>
+                    <ul class="list-group list-group-flush">
+                        <!--<li class="list-group-item text-primary" style="font-size: 0.7rem !important;">※ 그룹코드 'ITEM_LV1' 인 경우 추가정보1 : 입찰공사유형인 경우 'WORK_TYPE' 입력, 추가정보2 : 부산물 여부 'Y'/'N' 중 하나 반드시 입력</li>-->
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="col-12 text-end mb-1">
+                        <!--<button type="button" class="btn btn-outline-light btn-xs text-end" onclick="openProductPopup()">add</button>-->
+                        <button type="button" class="btn btn-outline-light btn-xs text-end" th:onclick="|javascript:insertGridRow()|">코드추가</button><!-- data-bs-toggle="modal" data-bs-target="#schProductPopup" data-whatever="@mdo"  -->
+                        <button type="button" class="btn btn-outline-light btn-xs text-end" th:onclick="|javascript:deleteGridRow()|">행삭제</button><!-- data-bs-toggle="modal" data-bs-target="#schProductPopup" data-whatever="@mdo"  -->
+                    </div>
+                    <div class="col-12">
+                        <div id="realgrid" style="width: 100%; height: 600px"></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="text-end">
+                                <button class="btn btn-secondary" type="button" onclick="updateProc()">저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let container, provider, gridView;
+        document.addEventListener('DOMContentLoaded', function () {
+            container = document.getElementById('realgrid');
+            provider = new RealGrid.LocalDataProvider(false);
+            gridView = new RealGrid.GridView(container);
+            gridView.setDataSource(provider);
+
+            let useYnValues = ["Y", "N"];
+            let useYnLabels = ["Y", "N"];
+
+            // 필드 생성
+            provider.setFields([
+                {  fieldName: "legCd",      dataType: "text"  },
+                {  fieldName: "grpCd",      dataType: "text"  },
+                {  fieldName: "subGrpCd",   dataType: "text"  },
+                {  fieldName: "code",       dataType: "text"  },
+                {  fieldName: "codeNm",     dataType: "text"  },
+                {  fieldName: "codeDesc",   dataType: "text"  },
+                {  fieldName: "sortOrd",    dataType: "text"  },
+                {  fieldName: "info1",      dataType: "text"  },
+                {  fieldName: "info2",      dataType: "text"  },
+                {  fieldName: "info3",      dataType: "text"  },
+                {  fieldName: "info4",      dataType: "text"  },
+                {  fieldName: "info5",      dataType: "text"  },
+                {  fieldName: "info6",      dataType: "text"  },
+                {  fieldName: "info7",      dataType: "text"  },
+                {  fieldName: "info8",      dataType: "text"  },
+                {  fieldName: "info9",      dataType: "text"  },
+                {  fieldName: "info10",     dataType: "text"  },
+                {  fieldName: "remk",       dataType: "text"  },
+                {  fieldName: "useYn",      dataType: "text"  },
+                /*{  fieldName: "insDttm",    dataType: "datetime",  datetimeFormat: "yyyy-MM-dd"  },
+                {  fieldName: "insUserid",  dataType: "text"  },
+                {  fieldName: "updDttm",    dataType: "datetime",  datetimeFormat: "yyyy-MM-dd"  },
+                {  fieldName: "updUserid",  dataType: "text"  },*/
+                {  fieldName: "oriGrpCd",   dataType: "text"  },
+                {  fieldName: "oriCode",    dataType: "text"  },
+            ]);
+
+            // 컬럼 생성
+            gridView.setColumns([
+                {  name: "legCd",       fieldName: "legCd",      type : "data",  width: "100",  header: {  text: "LegCode"           },  visible: false,  editable: false,  },
+                {  name: "grpCd",       fieldName: "grpCd",      type : "data",  width: "100",  header: {  text: "그룹코드"          },  },
+                {  name: "subGrpCd",    fieldName: "subGrpCd",   type : "data",  width: "100",  header: {  text: "서브그릅코드"      },  visible: false,  editable: false,  },
+                {  name: "code",        fieldName: "code",       type : "data",  width: "100",  header: {  text: "코드",      styleName: "light-blue-column"              },  },
+                {  name: "codeNm",      fieldName: "codeNm",     type : "data",  width: "180",  header: {  text: "코드명",    styleName: "light-blue-column"            },  },
+                {  name: "codeDesc",    fieldName: "codeDesc",   type : "data",  width: "300",  header: {  text: "코드상세"          },  styleName: "left-column",  },
+                {  name: "sortOrd",     fieldName: "sortOrd",    type : "data",  width: "60" ,  header: {  text: "정렬순서",  styleName: "light-blue-column"          },  },
+                {  name: "useYn",       fieldName: "useYn",      type : "data",  width: "60" ,  header: {  text: "사용여부",  styleName: "light-blue-column"          },  "lookupDisplay": true,  "editor": { "type": "dropdown",  "dropDownCount": 2,"domainOnly": true, "values": useYnValues, "labels": useYnLabels}},
+                {  name: "info1",       fieldName: "info1",      type : "data",  width: "100",  header: {  text: "추가정보1",  styleName: "multi-line-css"  },  },
+                {  name: "info2",       fieldName: "info2",      type : "data",  width: "100",  header: {  text: "추가정보2",  styleName: "multi-line-css"  }  },
+                {  name: "info3",       fieldName: "info3",      type : "data",  width: "100",  header: {  text: "추가정보3"         },  },
+                {  name: "info4",       fieldName: "info4",      type : "data",  width: "100",  header: {  text: "추가정보4"         },  },
+                {  name: "info5",       fieldName: "info5",      type : "data",  width: "100",  header: {  text: "추가정보5"         },  },
+                {  name: "info6",       fieldName: "info6",      type : "data",  width: "100",  header: {  text: "추가정보6"         },  },
+                {  name: "info7",       fieldName: "info7",      type : "data",  width: "100",  header: {  text: "추가정보7"         },  },
+                {  name: "info8",       fieldName: "info8",      type : "data",  width: "100",  header: {  text: "추가정보8"         },  },
+                {  name: "info9",       fieldName: "info9",      type : "data",  width: "100",  header: {  text: "추가정보9"         },  },
+                {  name: "info10",      fieldName: "info10",     type : "data",  width: "100",  header: {  text: "추가정보10"        },  },
+                /*{  name: "remk",        fieldName: "remk",       type : "data",  width: "100",  header: {  text: "비고"              },  visible: false,  },
+                {  name: "insDttm",     fieldName: "insDttm",    type : "data",  width: "100",  header: {  text: "등록일시"          },  visible: false,  datetimeFormat: "yyyy-MM-dd"  },
+                {  name: "insUserid",   fieldName: "insUserid",  type : "data",  width: "100",  header: {  text: "등록자아이디"      },  visible: false,  },
+                {  name: "updDttm",     fieldName: "updDttm",    type : "data",  width: "100",  header: {  text: "수정일시"          },  visible: false,  datetimeFormat: "yyyy-MM-dd"  },
+                {  name: "updUserid",   fieldName: "updUserid",  type : "data",  width: "100",  header: {  text: "수정자아이디"      },  visible: false,  },*/
+                {  name: "oriGrpCd",    fieldName: "oriGrpCd",   type : "data",  width: "100",  header: {  text: "수정전그룹아이디"  },  visible: false,  editable: false,  },
+                {  name: "oriCode",     fieldName: "oriCode",    type : "data",  width: "60" ,  header: {  text: "수정전코드"        },  visible: false,  editable: false,  },
+            ]);
+
+            //체크박스(false), 라디오버튼(true)
+            gridView.setCheckBar({  exclusive: true,  visible: false    });
+            //상태바 표시여부
+            gridView.setStateBar({  visible: true  });
+            //하단 소계 감추기
+            gridView.footers.visible = false;
+            gridView.editOptions.editable = true;
+            gridView.editOptions.appendable = false;
+            gridView.editOptions.insertable = false;
+            //행삭제, 저장시점에 deletedRows 가져오기위해....
+            gridView.hideDeletedRows = true;
+            provider.setOptions({
+                softDeleting: true
+            });
+
+            gridView.header.height = 36;
+            gridView.displayOptions.rowHeight = 36;
+
+            gridView.onCellDblClicked = function(grid, clickData) {
+                var data = gridView.getJsonRows(clickData.itemIndex, clickData.itemIndex);
+                //location.href = "/p1612/p161201_02?rfqId=" + data[clickData.itemIndex].rfqId;
+            }
+            // gridView.onRowInserting = function (grid, itemIndex, dataRow) {
+            //     console.log('Inserted: ' + dataRow + ' at ' + itemIndex);
+            //
+            // }
+            provider.onRowInserting = function (provider, row, values) {
+                console.log("onRowInserting()");
+                return true;
+            }
+            provider.onRowInserted = function (provider, row) {
+                console.log("DataProvider row inserted!");
+                console.log(provider.getJsonRow(row));
+            };
+            gridView.onCellEdited = function (grid, itemIndex, row, field) {
+                console.log('Edit done! at ' + itemIndex + ', ' + field);
+                gridView.commit();
+            }
+            search();
+        });
+
+        function search() {
+            /*
+            if ($("#schInsUserNm").val().trim().length == 1 ||
+                $("#schRfqId").val().trim().length == 1 ||
+                $("#schRfqTitle").val().trim().length == 1) {
+                toastrWarning("검색어는 두글자 이상 입력하세요.");
+                return;
+            }
+            */
+            provider.clearRows();
+
+            var params = {};
+            /*params.schProGrp1   = $("#schProGrp1").val();
+            params.schProGrp2   = $("#schProGrp2").val();
+            params.schInsUserNm = $("#schInsUserNm").val();
+            params.schRfqId     = $("#schRfqId").val();
+            params.schRfqTitle  = $("#schRfqTitle").val();
+            params.schRfqStatus = $("#schRfqStatus").val();
+            params.schDtRange   = $("#schDtRange").val();
+            params.schFromDt    = $("#schDtRange").val() != "" ? $("#schDtRange").val().split(" ~ ")[0] : "";
+            params.schToDt      = $("#schDtRange").val() != "" ? $("#schDtRange").val().split(" ~ ")[1] : "";*/
+
+            ajaxJsonCall("/admin/selectCmmLegCodeList", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+                    if (data.fields.codeList.length == 0) {
+                        toastrWarning("조회된 공통코드가 없습니다.");
+                        return;
+                    }
+
+                    provider.fillJsonData(data.fields.codeList, { fillMode: "set" });
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+
+        function insertGridRow() {
+            console.log("addLegCode()");
+            //provider.addRow([]);
+            console.log(provider.getRowCount());
+
+            //이전행의 필수 입력값 입력여부 체크
+            let lastRowIdx = provider.getRowCount();
+            /*if (lastRowIdx != 0) {
+                let rowData = gridView.getValues(lastRowIdx -1);
+                console.log(rowData);
+                //필수입력값 체크
+                if (isEmptyValue(rowData.code) || isEmptyValue(rowData.codeNm) || isEmptyValue(rowData.sortOrd) || isEmptyValue(rowData.useYn) || isEmptyValue(rowData.info2)) {
+                    toastrWarning("필수 입력값이 입력되지 않았습니다.");
+                    return;
+                }
+            }*/
+            // gridView.beginAppendRow();
+            // gridView.setValue(lastRowIdx, "legCd", "STW");
+            // gridView.setValue(lastRowIdx, "grpCd", "ITEM_LV1");
+            // gridView.setValue(lastRowIdx, "sortOrd", (lastRowIdx + 1) * 10);
+            // gridView.setValue(lastRowIdx, "useYn", "Y");
+            // gridView.setValue(lastRowIdx, "info2", "N");
+            // gridView.showEditor();
+            // gridView.setFocus();
+
+            provider.insertRow(lastRowIdx, {
+                legCd: "STW",
+                //grpCd: "ITEM_LV1",
+                //sortOrd: (lastRowIdx + 1) * 10,
+                useYn: "Y",
+                //info2: "N"
+            });
+            // gridView.showEditor();
+            // gridView.setFocus();
+        }
+
+        function deleteGridRow() {
+            let curr = gridView.getCurrent();
+            console.log(curr);
+            console.log(provider.getRowState(curr.dataRow));
+            provider.removeRow(curr.dataRow);
+            console.log(provider.getJsonRows(0, -1, true));
+        }
+
+        function updateProc() {
+
+            gridView.commit();
+
+            let stateRows = provider.getAllStateRows();
+
+            let insertedRows = [];
+            let updatedRows = [];
+            let deletedRows = [];
+            for (let i = 0; i < stateRows.created.length; i++) {
+                insertedRows.push(provider.getJsonRow(stateRows.created[i]))
+            }
+            for (let i = 0; i < stateRows.updated.length; i++) {
+                updatedRows.push(provider.getJsonRow(stateRows.updated[i]))
+            }
+            for (let i = 0; i < stateRows.deleted.length; i++) {
+                deletedRows.push(provider.getJsonRow(stateRows.deleted[i]))
+            }
+
+            let isOk = true;
+            //등록/수정시 ITEM_LV1인 경우 필수 값 체크
+            for (let i = 0; i < insertedRows.length; i++) {
+                if (insertedRows[i].grpCd == 'ITEM_LV1' && isEmptyValue(insertedRows[i].info2)) {
+                    toastrWarning("'ITEM_LV1'의 추가정보2는 필수값입니다.")
+                    isOk = false;
+                    break;
+                }
+            }
+
+            for (let i = 0; i < updatedRows.length; i++) {
+                if (updatedRows[i].grpCd == 'ITEM_LV1' && isEmptyValue(updatedRows[i].info2)) {
+                    toastrWarning("'ITEM_LV1'의 추가정보2는 필수값입니다.")
+                    isOk = false;
+                    break;
+                }
+            }
+
+            if(!isOk) return;
+            if(!confirm("저장하시겠습니까?")) return;
+
+            let params = {};
+            params.insertedRows = insertedRows;
+            params.updatedRows = updatedRows;
+            params.deletedRows = deletedRows;
+
+            ajaxJsonCall("/admin/updateCmmLegCodeList", params, function (data) {
+                if (data.fields.RESULT_CD == "S") {
+                    toastrSuccess();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    toastrError(data.errMsg);
+                }
+            });
+        }
+    </script>
+
+</th:block>
+</html>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.haesungds.ecoc.education.mapper.ECocMapper">
+    <select id="selectCmmCodeList" parameterType="map" resultType="cmmLegCode">
+        SELECT ROWNUM AS NUM
+             , CLC.LEG_CD
+             , CLC.GRP_CD
+             , CLC.SUB_GRP_CD
+             , CLC.CODE
+             , CLC.CODE_NM
+             , CLC.CODE_DESC
+             , CLC.SORT_ORD
+             , CLC.INFO1
+             , CLC.INFO2
+             , CLC.INFO3
+             , CLC.INFO4
+             , CLC.INFO5
+             , CLC.INFO6
+             , CLC.INFO7
+             , CLC.INFO8
+             , CLC.INFO9
+             , CLC.INFO10
+             , CLC.REMK
+             , CLC.USE_YN
+             , CLC.INS_DTTM
+             , CLC.INS_USERID
+             , CLC.UPD_DTTM
+             , CLC.UPD_USERID
+             , CLC.GRP_CD AS ORI_GRP_CD
+             , CLC.CODE AS ORI_CODE
+          FROM CMM_LEG_CODE CLC
+         WHERE LEG_CD = #{legCd}
+        <if test="grpCd != '' and grpCd != null">
+            AND GRP_CD = #{grpCd}
+        </if>
+        <if test="info1 != '' and info1 != null">
+            AND INFO1 = #{info1}
+        </if>
+        <if test="info2 != '' and info2 != null">
+            AND INFO2 = #{info2}
+        </if>
+        <if test="info3 != '' and info3 != null">
+            AND INFO3 = #{info3}
+        </if>
+        <if test="info4 != '' and info4 != null">
+            AND INFO4 = #{info4}
+        </if>
+        <if test="info5 != '' and info5 != null">
+            AND INFO5 = #{info5}
+        </if>
+        <if test="info6 != '' and info6 != null">
+            AND INFO6 = #{info6}
+        </if>
+        <if test="info7 != '' and info7 != null">
+            AND INFO7 = #{info7}
+        </if>
+        <if test="info8 != '' and info8 != null">
+            AND INFO8 = #{info8}
+        </if>
+        <if test="info9 != '' and info9 != null">
+            AND INFO9 = #{info9}
+        </if>
+        <if test="info10 != '' and info10 != null">
+            AND INFO10 = #{info10}
+        </if>
+        <if test="useYn != '' and useYn != null">
+            AND USE_YN = #{useYn}
+        </if>
+        ORDER BY CLC.GRP_CD, CLC.SORT_ORD
+    </select>
+
+    <select id="selectEducationList" parameterType="map" resultType="eCocInfo">
+        SELECT EDU_ID
+             , EDU_GRP_CD1
+             , (SELECT CODE_NM FROM CMM_LEG_CODE WHERE LEG_CD = 'ECC' AND GRP_CD = 'EDU_GRP_LV1' AND CODE = EE.EDU_GRP_CD1) AS EDU_GRP_CD1_NM
+             , EDU_GRP_CD2
+             , (SELECT CODE_NM FROM CMM_LEG_CODE WHERE LEG_CD = 'ECC' AND GRP_CD = 'EDU_GRP_LV2' AND CODE = EE.EDU_GRP_CD2) AS EDU_GRP_CD2_NM
+             , EDU_TYPE
+             , (SELECT CODE_NM FROM CMM_LEG_CODE WHERE LEG_CD = 'ECC' AND GRP_CD = 'EDU_TYPE' AND CODE = EE.EDU_TYPE) AS EDU_TYPE_NM
+             , EDU_TITLE
+             , EDU_CONTENT
+             , QR_USE
+             , QR_URL
+             , INS_DTTM
+             , INS_USERID
+             , (SELECT USER_NM FROM LEGUM.CMM_USER WHERE USERID = EE.INS_USERID) AS INS_USER_NM
+             , UPD_DTTM
+             , UPD_USERID
+             , (SELECT USER_NM FROM LEGUM.CMM_USER WHERE USERID = EE.UPD_USERID) AS UPD_USER_NM
+          FROM ECC_EDUCATION EE
+         WHERE 1=1
+        <if test="schEduGrpLv1 != null and schEduGrpLv1 != ''">
+           AND EDU_GRP_CD1 = #{schEduGrpLv1}
+        </if>
+        <if test="schEduGrpLv2 != null and schEduGrpLv2 != ''">
+            AND EDU_GRP_CD2 = #{schEduGrpLv2}
+        </if>
+        <if test="eduTitle != null and eduTitle != ''">
+            AND EDU_TITLE = #{eduTitle}
+        </if>
+         ORDER BY INS_DTTM DESC
+    </select>
+
+    <select id="selectEducationInfo" parameterType="map" resultType="eCocInfo">
+        SELECT EDU_ID
+             , EDU_GRP_CD1
+             , (SELECT CODE_NM FROM CMM_LEG_CODE WHERE LEG_CD = 'ECC' AND GRP_CD = 'EDU_GRP_LV1' AND CODE = EE.EDU_GRP_CD1) AS EDU_GRP_CD1_NM
+             , EDU_GRP_CD2
+             , (SELECT CODE_NM FROM CMM_LEG_CODE WHERE LEG_CD = 'ECC' AND GRP_CD = 'EDU_GRP_LV2' AND CODE = EE.EDU_GRP_CD2) AS EDU_GRP_CD2_NM
+             , EDU_TYPE
+             , (SELECT CODE_NM FROM CMM_LEG_CODE WHERE LEG_CD = 'ECC' AND GRP_CD = 'EDU_TYPE' AND CODE = EE.EDU_TYPE) AS EDU_TYPE_NM
+             , EDU_TITLE
+             , EDU_CONTENT
+             , QR_USE
+             , QR_URL
+             , INS_DTTM
+             , INS_USERID
+             , UPD_DTTM
+             , UPD_USERID
+        FROM ECC_EDUCATION EE
+        WHERE EDU_ID = #{eduId}
+    </select>
+
+    <insert id="educationRegistProc" parameterType="eCocInfo">
+        <selectKey keyProperty="eduId" resultType="String" order="BEFORE">
+            SELECT LEGSM.ECC_EDUCATION_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ECC_EDUCATION(
+            EDU_ID
+            , EDU_GRP_CD1
+            , EDU_GRP_CD2
+            , EDU_TYPE
+            , EDU_TITLE
+            , EDU_CONTENT
+            , QR_USE
+            , QR_URL
+            , INS_DTTM
+            , INS_USERID
+            , UPD_DTTM
+            , UPD_USERID
+        )
+        VALUES(
+            #{eduId}
+            , #{eduGrpCd1}
+            , #{eduGrpCd2}
+            , #{eduType}
+            , #{eduTitle}
+            , #{eduContent}
+            , #{qrUse}
+            , '/mp4Stream?fileNm=' || ${eduId} || '.' ||  #{fileExt}
+            , SYSDATE
+            , #{insUserid}
+            , SYSDATE
+            , #{updUserid}
+        )
+    </insert>
+
+    <update id="educationModifyProc" parameterType="eCocInfo">
+        UPDATE ECC_EDUCATION
+           SET EDU_GRP_CD1 = #{eduGrpCd1}
+             , EDU_GRP_CD2 = #{eduGrpCd2}
+             , EDU_TYPE    = #{eduType}
+             , EDU_TITLE   = #{eduTitle}
+             , EDU_CONTENT = #{eduContent}
+             , QR_USE      = #{qrUse}
+        <if test="qrUrl != null and qrUrl != ''">
+             , QR_URL      = #{qrUrl}
+        </if>
+             , UPD_DTTM    = SYSDATE
+             , UPD_USERID  = #{updUserid}
+         WHERE EDU_ID = #{eduId}
+    </update>
+
+    <delete id="educationDeleteProc" parameterType="map">
+        DELETE FROM ECC_EDUCATION
+         WHERE EDU_ID = #{eduId}
+    </delete>
+
+    <select id="selectEducationFileInfo" parameterType="map" resultType="eccFile">
+        SELECT *
+        FROM (
+                 SELECT ROW_NUMBER() OVER(ORDER BY FILE_SEQ DESC) AS RNUM, FILE_SEQ
+                      , MENU_ID
+                      , PARENT_ID
+                      , ORI_FILE_NM
+                      , SVR_FILE_NM
+                      , FILE_PATH
+                      , FILE_TYPE
+                      , FILE_SIZE
+                      , INFO1
+                      , INFO2
+                      , INFO3
+                      , INFO4
+                      , INFO5
+                 FROM ECC_FILE
+                 WHERE MENU_ID = #{menuId}
+                   AND PARENT_ID = #{parentId}
+             )
+        WHERE RNUM = 1
+    </select>
+
+    <select id="checkUseridProc" parameterType="map" resultType="int">
+        SELECT COUNT(*) AS CNT
+          FROM LEGUM.CMM_USER
+         WHERE USERID = #{chkUserid}
+           AND PROD_SITE = 'HS'
+    </select>
+
+    <select id="checkUseridPwProc" parameterType="map" resultType="lowerHashMap">
+        SELECT USERID, DECODE(MES.PK_CRYPTO.ENC_AES@LEGTOMES(#{chkPassword}), BU.PASSWD, 'SAME', 'DIFF') AS PASS_CHK
+          FROM MES.BI_USER@LEGTOMES BU
+         WHERE USERID = #{chkUserid}
+           AND PROD_SITE = 'HS'
+
+    </select>
+</mapper>
